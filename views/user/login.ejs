@@ -1,0 +1,91 @@
+<%- include('../layouts/header') -%>
+
+ <!-- ------------------------- navbar  -------------------------
+ <nav class="navbar navbar-expand-md fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand ms-3" href="#">
+            <img src="img/Logo.avif" width="40px" class="d-inline-block ">
+        </a>
+
+        <form role="search" class="search-bar">
+            <div class="input-group ">
+                <input class="src-bar" type="search" name="" placeholder="Search For Products">
+                <button class="btn bg-white " type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav-colps"
+            aria-controls="nav-colps" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse flex-grow-0" id="nav-colps">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-drop nav-item">
+                    <% if(locals.user){ %>
+                        <a class="nav-link" href=""><i class="bi bi-person-circle"></i> <%= user.name %></a>
+                    <% }else{ %>
+                    <a class="nav-link" href="/login"><i class="bi bi-person-circle"></i> Login</a>
+                    <% } %>
+                    <ul class="log-drop " aria-labelledby="navbarDropdown">
+                        <li class="m-2"><a class="drop-item text-primary " href="/signup">Signup</a></li>
+                        <hr class="m-0">
+                        <li class="m-2"><a class="drop-item" href="#"><i
+                                    class="bi bi-person-square me-2"></i>Profile</a></li>
+                        <hr class="m-0">
+                        <li class="m-2"><a class="drop-item" href="#"><i
+                                    class="bi bi-heart-fill me-2"></i>Wishlist</a></li>
+                        <hr class="m-0">
+                        <li class="m-2"><a class="drop-item" href="#"><i class="bi bi-box-fill me-2"></i>Orders</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-hov nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-cart-fill me-1"></i>Cart</a>
+                </li>
+                <li class="nav-hov nav-item">
+                    <a class="nav-link" href="#">About us</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="sub-nav bg-white z-0 fixed-top py-2">
+    <div class="container d-flex justify-content-center ">
+        <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href="">Regular</a>
+        <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href="">Casuals</a>
+        <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href="">Formals</a>
+    </div>
+</div> -->
+
+ <!--------------------------- section of body --------------------------->
+ <section class="bg-clr text-white d-flex align-items-center">
+    <div class="container mt-3  d-flex justify-content-center">
+        <div class="log-box-ful row bg-white">
+            <div class="dis-part1 col-md-4 pt-5 pb-2">
+                <h2 class="fw-bold mb-3">Login</h2>
+                <p>Get access to your Orders, Wishlist and Recommendations</p>
+                <img class="crtn-img img-fluid mx-auto" src="img/cartoon.png">
+            </div>
+            <div class="col-md-8  my-auto text-center">
+                <% if(locals.mes){ %>
+                    <p class="text-warning"><%= mes %></p>
+                <% } %> 
+                <form class="mb-3" method="post">
+                    <input class="form-inp" type="email" name="email" placeholder="Enter email" required>
+                    <br>
+                    <input class="form-inp" type="password" name="password" placeholder="Enter password" required>
+                    <button type="submit" class="log-btn w-100 mt-3 text-white">Login</button>
+                </form>
+                <div class="text-start"><small ><a href="">Forgot password?</a></small></div>
+                <small class="d-block text-dark mt-5">New user?<a href="/signup">Signup</a></small>      
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<%- include('../layouts/footer') -%>
