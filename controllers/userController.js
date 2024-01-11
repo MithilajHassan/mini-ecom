@@ -105,7 +105,7 @@ export const getHome = async(req,res)=>{
     }
 } 
 
-// -----------Home page------------//
+// ----------- Logout ------------//
 export const userLogout = async(req,res)=>{
     try {
         req.session.destroy()
