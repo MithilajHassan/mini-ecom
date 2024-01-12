@@ -1,4 +1,4 @@
-import { User } from '../models/userModels.js'
+import { User } from '../models/userModel.js'
 import bcrypt, { hash } from 'bcrypt'
 
 // ----------Password bcrypting-----------//
@@ -14,12 +14,7 @@ const securePassword = async (password) => {
 // -----------Signup------------//
 export const loadSignup = async (req, res) => {
     try {
-        if(req.session.user_id){
-            console.log(req.session.user_id)
-            res.status(200).redirect('/')
-        }else{
-            res.status(200).render('signup')
-        }              
+        res.status(200).render('signup')            
     } catch (e) {
         console.log(e)
         res.status(501).send('Internal serveral issue')
@@ -55,21 +50,16 @@ export const signuping = async (req, res) => {
         }
     }
 }
+
 // -----------Login------------//
 export const getLogin = async(req,res)=>{
     try {
-        if(req.session.user_id){
-            console.log(req.session.user_id)
-            res.status(200).redirect('/')
-        }else{
-            res.status(200).render('login')
-        }       
+        res.status(200).render('login')     
     } catch (err) {
         console.log(err)
         res.status(500).send('internal Server error')
     }
 }
-
 export const verifyLogin = async(req,res)=>{
     try {
         const userData = await User.findOne({email:req.body.email})

@@ -1,31 +1,29 @@
 import user_route from './routes/userRoute.js'
-
+import dbConnect from './config/dbConnect.js'
 import express from 'express'
 import session from 'express-session'
-import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+import nocache from 'nocache'
 
-mongoose.connect(`mongodb://127.0.0.1:27017/luminovadb`).then((ans) => { 
-    console.log("Connected Successfully") 
-}).catch((err) => { 
-    console.log("Error in the Connection:"+err) 
-}) 
-
-
+dotenv.config()
+dbConnect()
 const app = express()
+const port =process.env.PORT || 7000
 
 app.set('view engine','ejs')
 app.set('views','./views/user')
 
+app.use(nocache())
 app.use(express.urlencoded({extended:true}))
 app.use(express.static('public'))
 app.use(session({
-    secret:"g37yd47d647ey382wu",
+    secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:false,
 }))
 
 app.use('/',user_route)
 
-app.listen(7000,()=>{
-    console.log(`Server started at http://localhost:7000`)
+app.listen(port,()=>{
+    console.log(`Server started at http://localhost:${port}`)
 })
