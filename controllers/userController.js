@@ -1,5 +1,5 @@
-import { User } from '../models/userModel.js'
-import bcrypt, { hash } from 'bcrypt'
+import User from '../models/userModel.js'
+import bcrypt from 'bcrypt'
 
 // ----------Password bcrypting-----------//
 const securePassword = async (password) => {
@@ -17,13 +17,14 @@ export const loadSignup = async (req, res) => {
         res.status(200).render('signup')            
     } catch (e) {
         console.log(e)
-        res.status(501).send('Internal serveral issue')
     }
 }
 export const signuping = async (req, res) => {
     try {
         const existingEmail = await User.findOne({email:req.body.email})
-        if (existingEmail) {
+        if (req.body.name.trim()===''){
+            res.render('signup', { mes:"Name cannot be empty"}) 
+        } else if (existingEmail) {
             res.status(409).render('signup', { mes: 'Email already exist' })
         } else {
             const sPassword = await securePassword(req.body.password)
@@ -36,19 +37,14 @@ export const signuping = async (req, res) => {
             const userData = await user.save()
             if (userData) {
                 req.session.user_id = userData._id
-                res.status(201).redirect('/')
+                res.status(200).redirect('/')
             } else {
-                res.render('signup', { mes: "Failed, please try again" })
+                res.status(401).render('signup', { mes: "Failed, please try again" })
             }
         }
     } catch (e) {
-        console.log(e)
-        if (e === 'notFound') {
-            res.status(404).send('Not Found')
-        } else {
-            res.status(500).send('internal Server error')
-        }
-    }
+        console.log(e)     
+    }  
 }
 
 // -----------Login------------//
@@ -57,7 +53,6 @@ export const getLogin = async(req,res)=>{
         res.status(200).render('login')     
     } catch (err) {
         console.log(err)
-        res.status(500).send('internal Server error')
     }
 }
 export const verifyLogin = async(req,res)=>{
@@ -76,7 +71,6 @@ export const verifyLogin = async(req,res)=>{
         }
     } catch (err) {
         console.log(err)
-        res.status(500).send('internal Server error')
     }
 } 
 

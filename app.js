@@ -4,6 +4,8 @@ import express from 'express'
 import session from 'express-session'
 import dotenv from 'dotenv'
 import nocache from 'nocache'
+import { errorhandler, notfoundHandler } from './middlewares/errorHandling.js'
+import admin_route from './routes/adminRoute.js'
 
 dotenv.config()
 dbConnect()
@@ -11,7 +13,7 @@ const app = express()
 const port =process.env.PORT || 7000
 
 app.set('view engine','ejs')
-app.set('views','./views/user')
+app.set('views',['./views/user','./views/admin'])
 
 app.use(nocache())
 app.use(express.urlencoded({extended:true}))
@@ -23,6 +25,10 @@ app.use(session({
 }))
 
 app.use('/',user_route)
+app.use('/admin',admin_route)
+
+
+app.use(notfoundHandler, errorhandler)
 
 app.listen(port,()=>{
     console.log(`Server started at http://localhost:${port}`)
