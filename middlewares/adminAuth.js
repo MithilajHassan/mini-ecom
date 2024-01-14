@@ -5,3 +5,11 @@ export const isAdminLogged = (req,res,next)=>{
      next()   
     }
 }
+
+export const isVeryfied = (req,res,next)=>{
+    if(req.session.admin_id){
+        next()
+    }else{
+        res.redirect('/admin')
+    }
+}

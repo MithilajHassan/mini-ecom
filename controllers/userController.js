@@ -37,7 +37,7 @@ export const signuping = async (req, res) => {
             const userData = await user.save()
             if (userData) {
                 req.session.user_id = userData._id
-                res.status(200).redirect('/')
+                res.redirect('/')
             } else {
                 res.status(401).render('signup', { mes: "Failed, please try again" })
             }
@@ -81,7 +81,7 @@ export const getHome = async(req,res)=>{
             const userData = await User.findById({_id:req.session.user_id})
             res.status(200).render('home',{user:userData})
         }else{
-            res.render('home')
+            res.status(200).render('home')
         }
     } catch (err) {
         console.log(err.message)
@@ -93,7 +93,7 @@ export const getHome = async(req,res)=>{
 export const userLogout = async(req,res)=>{
     try {
         req.session.destroy()
-        res.redirect('/')
+        res.redirect('/home')
     } catch (err) {
         console.log(err);
     }

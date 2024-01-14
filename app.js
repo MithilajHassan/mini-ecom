@@ -1,11 +1,13 @@
 import user_route from './routes/userRoute.js'
 import dbConnect from './config/dbConnect.js'
+import { errorhandler, notFoundHandler } from './middlewares/errorHandling.js'
+import admin_route from './routes/adminRoute.js'
 import express from 'express'
 import session from 'express-session'
 import dotenv from 'dotenv'
 import nocache from 'nocache'
-import { errorhandler, notfoundHandler } from './middlewares/errorHandling.js'
-import admin_route from './routes/adminRoute.js'
+
+
 
 dotenv.config()
 dbConnect()
@@ -27,9 +29,8 @@ app.use(session({
 app.use('/',user_route)
 app.use('/admin',admin_route)
 
-
-app.use(notfoundHandler, errorhandler)
+app.use(notFoundHandler,errorhandler)
 
 app.listen(port,()=>{
-    console.log(`Server started at http://localhost:${port}`)
+    console.log(`Server started at http://localhost:${port}/admin`)
 })

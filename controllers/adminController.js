@@ -17,9 +17,9 @@ export const verifyAdmin = async(req,res)=>{
             if (passCheck) {
                 if(adminData.is_admin === true){
                     req.session.admin_id=adminData._id
-                    res.redirect('/admin/dashboard')
+                    res.redirect('/admin/dashboard')       
                 }else{
-                    res.render('adminLogin',{mes:'You are not Admin'})
+                    res.status(401).render('adminLogin',{mes:'You are not Admin'})
                 }
             }else{
                 res.status(401).render('adminLogin', { mes: "Incorrect Password !!" })
@@ -36,6 +36,15 @@ export const verifyAdmin = async(req,res)=>{
 export const getDashboard = async(req,res)=>{
     try {
         res.status(200).render('dashboard')
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+//--------Product Management---------//
+export const getProductMng = async(req,res)=>{
+    try {
+        res.status(200).render('productManage')
     } catch (err) {
         console.log(err)
     }
