@@ -1,22 +1,23 @@
 <%- include('../layouts/adminHeader') -%>
 
 
-<aside class="side-bar ">
-    <div class="m-1 ">      
-        <a href="/admin/dashboard" class="text-black text-decoration-none"><button class="admn-btn-A mb-2 w-100">Dashboard</button></a>
-        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100">Customers</button></a>
-        <a href="/admin/productManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100">Products</button></a>
-        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100">Orders</button></a>
-        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100">Category</button></a>
-        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100">Banners</button></a>
-        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100">coupons</button></a>
-        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100">Sales Report</button></a>
+<aside class="side-bar mt-4">
+    <button class="" type="button">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="m-1 pt-2" id="body-pages">      
+        <a href="/admin/dashboard" class="text-black text-decoration-none"><button class="admn-btn-A mb-2 w-100 text-start ps-5"><i class="bi bi-box2-fill ms-3"></i> Dashboard</button></a>
+        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start ps-5"><i class="bi bi-people-fill ms-3"></i> Customers</button></a>
+        <a href="/admin/productManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start ps-5"><i class="bi bi-archive-fill ms-3"></i> Products</button></a>
+        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start ps-5 "><i class="bi bi-file-earmark-fill ms-3"></i> Orders</button></a>
+        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start ps-5"><i class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
+        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start ps-5"><i class="bi bi-card-image ms-3"></i> Banners</button></a>
+        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start ps-5"><i class="bi bi-star-fill ms-3"></i> coupons</button></a>
+        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start ps-5"><i class="bi bi-clipboard-data-fill ms-3"></i> Sales Report</button></a>
     </div>
     <div class="adm-lgout m-1">
-        <button class="admn-btn w-100"><a class="text-black text-decoration-none" href="">Logout</a></button>
+        <a class="text-black text-decoration-none" href="/admin/adminLogout"><button class="admn-btn w-100 text-start ps-5"><i class="bi bi-box-arrow-right ms-3"></i> Logout</button></a>
     </div>
 </aside>
-
-
 
 <%- include('../layouts/footer') -%>

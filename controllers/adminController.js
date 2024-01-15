@@ -49,3 +49,13 @@ export const getProductMng = async(req,res)=>{
         console.log(err)
     }
 }
+
+//----------- Logout ------------//
+export const adminLogout = async(req,res)=>{
+    try {
+        req.session.destroy()
+        res.redirect('/admin')
+    } catch (err) {
+        console.log(err);
+    }
+}
