@@ -1,11 +1,12 @@
 <%- include('../layouts/adminHeader') -%>
 
+<section class="container-fluid p-0 d-flex">
 <aside class="side-bar mt-4 " id="aside-menu">
     <button class="side-menu border-0 m-1" id="menu-btn"><span class="material-symbols-outlined">menu</span></button>   
     <div class="menu-items m-1 pt-2" id="menu-page">      
-        <a href="/admin/dashboard" class="text-black text-decoration-none"><button id="admn-btns" class="admn-btn-A mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i> Dashboard</button></a>
+        <a href="/admin/dashboard" class="text-black text-decoration-none"><button id="admn-btns" class="admn-btn mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i> Dashboard</button></a>
         <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-people-fill ms-3"></i> Customers</button></a>
-        <a href="/admin/productManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-archive-fill ms-3"></i> Products</button></a>
+        <a href="/admin/productManage" class="text-black text-decoration-none"><button class="admn-btn-A mb-2 w-100 text-start "><i class="bi bi-archive-fill ms-3"></i> Products</button></a>
         <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-file-earmark-fill ms-3"></i> Orders</button></a>
         <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
         <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-card-image ms-3"></i> Banners</button></a>
@@ -16,5 +17,10 @@
         <a class="text-black text-decoration-none" href="/admin/adminLogout"><button class="admn-btn w-100 text-start "><i class="bi bi-box-arrow-right ms-3"></i> Logout</button></a>
     </div>
 </aside>
+<div class="mt-4 p-2">
+    <a href="/admin/addProduct"><button type="button" class="btn text-white" style="background-color: #24df24;"><i class="bi bi-plus"></i> Add Products</button></a>
+</div>
+</section>
+
 
 <%- include('../layouts/footer') -%>

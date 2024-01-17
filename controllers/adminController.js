@@ -1,5 +1,28 @@
 import Admin from "../models/userModel.js"
+import Product from "../models/productModel.js"
 import {compare} from 'bcrypt'
+import multer from "multer"
+
+// --------Multer--------//
+const storage = multer.diskStorage({
+    destination:'./public/productImgs/',
+    filename:(req,file,cb)=>{
+            const name = Date.now()+'-'+file.originalname
+            cb(null,name)
+    }
+})
+export const upload = multer({
+    storage:storage,
+    fileFilter:(req,file,cb)=>{
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Only images are allowed!'));
+        }
+        cb(null, true);
+    },limits:{
+        fileSize: 1024 * 1024 * 10
+    }
+})
+
 
 //--------Login for Admin-------//
 export const adminGetLogin = async(req,res)=>{
@@ -44,7 +67,35 @@ export const getDashboard = async(req,res)=>{
 //--------Product Management---------//
 export const getProductMng = async(req,res)=>{
     try {
-        res.status(200).render('productManage')
+        res.status(200).render('products/productManage')
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const getAddProduct = async(req,res)=>{
+    try {
+        res.status(200).render('products/addProduct')
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const prodictAdding = async(req,res)=>{
+    try {
+        const product = new Product({
+            name:req.body.name,
+            brand:req.body.brand,
+            category:req.body.category,
+            description:req.body.description,
+            price:req.body.price,
+            quantity:req.body.quantity,
+            images:req.files.images
+        })
+        const productData = await product.save()
+        if (productData) {
+            res.redirect("/admin/productManage")
+        }else{
+            res.send('not working')
+        }
     } catch (err) {
         console.log(err)
     }
