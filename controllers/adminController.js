@@ -5,7 +5,7 @@ import multer from "multer"
 
 // --------Multer--------//
 const storage = multer.diskStorage({
-    destination:'./public/productImgs/',
+    destination:'./public/productImgs',
     filename:(req,file,cb)=>{
             const name = Date.now()+'-'+file.originalname
             cb(null,name)
@@ -88,13 +88,13 @@ export const prodictAdding = async(req,res)=>{
             description:req.body.description,
             price:req.body.price,
             quantity:req.body.quantity,
-            images:req.files.images
+            images:req.files
         })
         const productData = await product.save()
         if (productData) {
             res.redirect("/admin/productManage")
         }else{
-            res.send('not working')
+            res.send('failed please try again')
         }
     } catch (err) {
         console.log(err)

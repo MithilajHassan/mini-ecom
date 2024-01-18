@@ -11,7 +11,7 @@ admin_route.get('/dashboard',isVeryfied,getDashboard)
 
 admin_route.get('/productManage',isVeryfied,getProductMng)
 admin_route.get('/addProduct',isVeryfied,getAddProduct)
-admin_route.post('/addProduct',upload.array('images',5),prodictAdding)
+admin_route.post('/addProduct',upload.array('images',3),prodictAdding)
 
 admin_route.get('/adminLogout',adminLogout)
 

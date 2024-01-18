@@ -1,3 +1,4 @@
+import { OTP, sendOTP } from '../middlewares/sendSMS.js'
 import User from '../models/userModel.js'
 import bcrypt from 'bcrypt'
 
@@ -8,6 +9,27 @@ const securePassword = async (password) => {
         return passwordHash
     } catch (error) {
         console.log(error)
+    }
+}
+
+// ----------- O T P -----------//
+export const getOtp = async (req, res) => {
+    try {
+        await sendOTP('+917559000213',OTP)     
+        res.status(200).render('otp')            
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const verifyOtp = async (req, res) => {
+    try {
+        if(req.body.otp == OTP){
+            res.redirect('/') 
+        }else{
+            res.status(401).render('otp',{mes:"Wrong OTP"})
+        }                    
+    } catch (e) {
+        console.log(e)
     }
 }
 
@@ -37,7 +59,7 @@ export const signuping = async (req, res) => {
             const userData = await user.save()
             if (userData) {
                 req.session.user_id = userData._id
-                res.redirect('/')
+                res.redirect('/verify')
             } else {
                 res.status(401).render('signup', { mes: "Failed, please try again" })
             }
@@ -62,7 +84,7 @@ export const verifyLogin = async(req,res)=>{
             const passwordChecking = await bcrypt.compare(req.body.password,userData.password)
             if(passwordChecking){
                 req.session.user_id = userData._id
-                res.status(200).redirect('/')
+                res.redirect('/verify')
             }else {
                 res.status(401).render('login', { mes: "Incorrect Password !!" })
             }

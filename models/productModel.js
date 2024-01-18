@@ -9,7 +9,7 @@ const productSchema = new Schema({
         required:true
     },category:{
         type:String,
-        required:false
+        required:true
     },description:{
         type:String,
         required:true
