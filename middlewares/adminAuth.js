@@ -6,7 +6,7 @@ export const isAdminLogged = (req,res,next)=>{
     }
 }
 
-export const isVeryfied = (req,res,next)=>{
+export const isAdmin = (req,res,next)=>{
     if(req.session.admin_id){
         next()
     }else{

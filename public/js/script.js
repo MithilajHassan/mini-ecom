@@ -9,13 +9,13 @@ menuBtn.addEventListener('click',()=>{
         aside.style.width = '60vw'
         aside.style.backgroundColor = 'white'
         aside.style.position = 'absolute'
-        aside.style.height = 'fit-content'
+        // aside.style.height = 'fit-content'
         logoutBtn.style.display = "block"
     }else{
         menuItems.style.display = "none"
         aside.style.width = 'fit-content'
         aside.style.position = 'relative'
-        aside.style.height = '85vh'
+        // aside.style.height = '85vh'
         logoutBtn.style.display = "none"
     }
 })

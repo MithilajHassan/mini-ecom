@@ -1,22 +1,28 @@
 import express from "express"
-import { adminGetLogin, adminLogout, getAddProduct, getDashboard, getProductMng, prodictAdding, upload, verifyAdmin } from "../controllers/adminController.js"
-import { isAdminLogged, isVeryfied } from "../middlewares/adminAuth.js"
+import { adminGetLogin, adminLogout, getAddProduct, getDashboard, getProductMng, getUsers, prodictAdding, upload, verifyAdmin } from "../controllers/adminController.js"
+import { isAdmin, isAdminLogged } from "../middlewares/adminAuth.js"
 const admin_route = express.Router()
 
 
-admin_route.get('/',isAdminLogged,adminGetLogin)
-admin_route.post('/',verifyAdmin)
+admin_route.get('/', isAdminLogged, adminGetLogin)
+admin_route.post('/', verifyAdmin)
 
-admin_route.get('/dashboard',isVeryfied,getDashboard)
+admin_route.get('/dashboard', isAdmin, getDashboard)
 
-admin_route.get('/productManage',isVeryfied,getProductMng)
-admin_route.get('/addProduct',isVeryfied,getAddProduct)
-admin_route.post('/addProduct',upload.array('images',3),prodictAdding)
+//--------Product---------------//
+admin_route.get('/productManage', isAdmin, getProductMng)
+admin_route.get('/addProduct', isAdmin, getAddProduct)
+admin_route.post('/addProduct', upload.array('images', 3), prodictAdding)
 
-admin_route.get('/adminLogout',adminLogout)
+//--------customers---------------//
+admin_route.get('/users',isAdmin,getUsers)
 
-admin_route.get('*',(req,res)=>{      
-        res.redirect('/admin')   
+
+//-------------Logout------------//
+admin_route.get('/adminLogout', adminLogout)
+
+admin_route.get('*', (req, res) => {
+        res.redirect('/admin')
 })
 
 export default admin_route

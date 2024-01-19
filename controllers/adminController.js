@@ -2,8 +2,9 @@ import Admin from "../models/userModel.js"
 import Product from "../models/productModel.js"
 import {compare} from 'bcrypt'
 import multer from "multer"
+import User from "../models/userModel.js"
 
-// --------Multer--------//
+//------------Multer--------//
 const storage = multer.diskStorage({
     destination:'./public/productImgs',
     filename:(req,file,cb)=>{
@@ -14,7 +15,7 @@ const storage = multer.diskStorage({
 export const upload = multer({
     storage:storage,
     fileFilter:(req,file,cb)=>{
-        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) {
             return cb(new Error('Only images are allowed!'));
         }
         cb(null, true);
@@ -58,23 +59,34 @@ export const verifyAdmin = async(req,res)=>{
 //--------Dashboard---------//
 export const getDashboard = async(req,res)=>{
     try {
-        res.status(200).render('dashboard')
+        res.status(200).render('dashboard',{isLogged:true})
     } catch (err) {
         console.log(err)
     }
 }
 
+//----------Customers------------//
+export const getUsers = async(req,res)=>{
+    try {
+        const user = await User.find({is_admin:false})
+        res.status(200).render('users',{user,isLogged:true})
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
 //--------Product Management---------//
 export const getProductMng = async(req,res)=>{
     try {
-        res.status(200).render('products/productManage')
+        res.status(200).render('products/productManage',{isLogged:true})
     } catch (err) {
         console.log(err)
     }
 }
 export const getAddProduct = async(req,res)=>{
     try {
-        res.status(200).render('products/addProduct')
+        res.status(200).render('products/addProduct',{isLogged:true})
     } catch (err) {
         console.log(err)
     }

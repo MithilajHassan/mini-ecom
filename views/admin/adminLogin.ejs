@@ -9,9 +9,9 @@
                 <p>Hello Admin,<br>Get access to your works</p>
                 <img class="crtn-img img-fluid mx-auto" src="img/cartoon.png">
             </div>
-            <div class="col-md-8 my-auto ">
+            <div class="col-md-8 my-auto pb-3">
                 <% if(locals.mes){ %>
-                    <p class="text-warning"><%= mes %></p>
+                    <p class="text-primary"><%= mes %></p>
                 <% } %> 
                 <form class="mb-1" method="post">
                     <input class="form-inp" type="email" name="email" placeholder="Enter email" required>
@@ -19,7 +19,7 @@
                     <input class="form-inp" type="password" name="password" placeholder="Enter password" required>
                     <button type="submit" class="log-btn w-100 mt-3 text-white">Login</button>
                 </form>
-                <small class=""><a href="">Forgot password?</a></small>  
+                <small class="ps-2"><a href="">Forgot password?</a></small>  
             </div>
         </div>
     </div>

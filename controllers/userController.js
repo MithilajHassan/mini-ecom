@@ -1,4 +1,5 @@
 import { OTP, sendOTP } from '../middlewares/sendSMS.js'
+import Product from '../models/productModel.js'
 import User from '../models/userModel.js'
 import bcrypt from 'bcrypt'
 
@@ -24,7 +25,7 @@ export const getOtp = async (req, res) => {
 export const verifyOtp = async (req, res) => {
     try {
         if(req.body.otp == OTP){
-            res.redirect('/') 
+            res.redirect('/home') 
         }else{
             res.status(401).render('otp',{mes:"Wrong OTP"})
         }                    
@@ -59,7 +60,7 @@ export const signuping = async (req, res) => {
             const userData = await user.save()
             if (userData) {
                 req.session.user_id = userData._id
-                res.redirect('/verify')
+                res.redirect('/verifyOtp')
             } else {
                 res.status(401).render('signup', { mes: "Failed, please try again" })
             }
@@ -84,7 +85,7 @@ export const verifyLogin = async(req,res)=>{
             const passwordChecking = await bcrypt.compare(req.body.password,userData.password)
             if(passwordChecking){
                 req.session.user_id = userData._id
-                res.redirect('/verify')
+                res.redirect('/')
             }else {
                 res.status(401).render('login', { mes: "Incorrect Password !!" })
             }
@@ -99,11 +100,12 @@ export const verifyLogin = async(req,res)=>{
 // -----------Home page------------//
 export const getHome = async(req,res)=>{
     try {
+        const productData = await Product.find()
         if(req.session.user_id){
             const userData = await User.findById({_id:req.session.user_id})
-            res.status(200).render('home',{user:userData})
+            res.status(200).render('home',{user:userData,product:productData})
         }else{
-            res.status(200).render('home')
+            res.status(200).render('home',{product:productData})
         }
     } catch (err) {
         console.log(err.message)

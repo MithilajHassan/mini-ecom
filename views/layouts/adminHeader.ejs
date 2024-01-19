@@ -12,28 +12,25 @@
 </head>
 <body>
 <!--------------------------- navbar  --------------------------->
- <nav class="navbar navbar-expand-md fixed-top">
+ <nav class="navbar navbar-expand-md fixed-top ">
     <div class="container-fluid">
         <a class="navbar-brand ms-3" href="#">
             <img src="/img/Logo.avif" width="40px" class="d-inline-block">
         </a>
-
-        <form role="search" class="search-bar">
-            <div class="input-group ">
-                <input class="src-bar" type="search" name="search" placeholder="Search For Products">
-                <button class="btn bg-white " type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </form>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav-colps"
-            aria-controls="nav-colps" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse flex-grow-0" id="nav-colps">
-            
+<% if(locals.isLogged === true){ %>
+    <form role="search" class="search-bar">
+        <div class="input-group ">
+            <input class="src-bar" type="search" name="search" placeholder="Search">
+            <button class="btn bg-white " type="submit">
+                <i class="bi bi-search"></i>
+            </button>
         </div>
+    </form>
+
+
+        <div class="collapse navbar-collapse pe-2 flex-grow-0" id="nav-colps">
+            <a class="text-decoration-none text-black" href=""><i class="bi bi-person-circle"></i> Profile</a>
+        </div>
+<% } %>
     </div>
 </nav>

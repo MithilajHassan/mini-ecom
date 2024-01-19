@@ -9,8 +9,8 @@ user_route.get('/',getHome)
 user_route.get('/home',getHome)
 
 //--------OTP----------//
-user_route.get('/verify',getOtp)
-user_route.post('/verify',verifyOtp)
+user_route.get('/verifyOtp',getOtp)
+user_route.post('/verifyOtp',verifyOtp)
 
 //------User Loign-------//
 user_route.get('/login',is_logged,getLogin)
@@ -20,7 +20,8 @@ user_route.post('/login',verifyLogin)
 user_route.get('/signup',is_logged,loadSignup)
 user_route.post('/signup',signuping)
 
-//------User Signup-------//
+
+//------Logout-------//
 user_route.get('/logout',userLogout)
 
 export default user_route
