@@ -30,19 +30,21 @@
                         Logout</button></a>
             </div>
         </aside>
-        <div class="d-flex align-items-center">
-            <table class="table table-danger table-striped w-auto mx-3">
+        <div class="d-flex align-items-center ps-5 w-75 table-responsive">
+            <table class="table table-bordered rounded-4 table-dark">
                 <tr>
-                    <th colspan="3">Users list</th>
+                    <th colspan="4"></th>
                 </tr>
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Actions</th>
+                    <th>Phone No:</th>
+                    <th>Action</th>
                 </tr>
                 <% if(user.length> 0){ %>
                     <% for(let i=0;i < user.length;i++){ %>
-                        <tr>
+                        <% if(user[i].is_blocked===false){ %>
+                           <tr>
                             <td>
                                 <%= user[i].name %>
                             </td>
@@ -50,13 +52,20 @@
                                 <%= user[i].email %>
                             </td>
                             <td>
-                                <a class="btn btn-secondary " href="/admin/block?id=<%= user[i]._id %>">block</a>
+                                <%= user[i].mobile_number %>
+                            </td>
+                            <td>
+                                <a class="btn"  style="background-color: #ff6090;" href="/admin/block?id=<%= user[i]._id %>">block</a>
                             </td>
                         </tr>
+                        <tr>
+                            <th colspan="4"></th>
+                        </tr> 
+                        <% } %>  
                         <% } %>
                             <% }else{ %>
                                 <tr>
-                                    <td colspan="2">Users not found</td>
+                                    <td colspan="4">Users not found</td>
                                 </tr>
                                 <% } %>
             </table>

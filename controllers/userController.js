@@ -1,4 +1,4 @@
-import { OTP, sendOTP } from '../middlewares/sendSMS.js'
+import {generateOTP, transporter } from '../middlewares/sendMail.js'
 import Product from '../models/productModel.js'
 import User from '../models/userModel.js'
 import bcrypt from 'bcrypt'
@@ -13,26 +13,6 @@ const securePassword = async (password) => {
     }
 }
 
-// ----------- O T P -----------//
-export const getOtp = async (req, res) => {
-    try {
-        await sendOTP('+917559000213',OTP)     
-        res.status(200).render('otp')            
-    } catch (e) {
-        console.log(e)
-    }
-}
-export const verifyOtp = async (req, res) => {
-    try {
-        if(req.body.otp == OTP){
-            res.redirect('/home') 
-        }else{
-            res.status(401).render('otp',{mes:"Wrong OTP"})
-        }                    
-    } catch (e) {
-        console.log(e)
-    }
-}
 
 // -----------Signup------------//
 export const loadSignup = async (req, res) => {
@@ -45,8 +25,8 @@ export const loadSignup = async (req, res) => {
 export const signuping = async (req, res) => {
     try {
         const existingEmail = await User.findOne({email:req.body.email})
-        if (req.body.name.trim()===''){
-            res.render('signup', { mes:"Name cannot be empty"}) 
+        if (req.body.name.trim()===''||req.body.email.trim()===''||req.body.password.trim()===''||req.body.m_number.trim()===''){
+            res.render('signup', { mes:"Inputs cannot be empty"}) 
         } else if (existingEmail) {
             res.status(409).render('signup', { mes: 'Email already exist' })
         } else {
@@ -60,6 +40,21 @@ export const signuping = async (req, res) => {
             const userData = await user.save()
             if (userData) {
                 req.session.user_id = userData._id
+                const OTP = await generateOTP()
+                req.session.otp = OTP
+                const mailOptions = {
+                    from: process.env.OWN_EMAIL,
+                    to: userData.email,
+                    subject: `OTP for user verification`,
+                    text: `Your otp is ${OTP}`
+                }
+                await transporter.sendMail(mailOptions,(error, info)=>{
+                    try {
+                        console.log('Email sent: ' + info.response)
+                    } catch (error) {
+                        console.log(error)
+                    }
+                  }) 
                 res.redirect('/verifyOtp')
             } else {
                 res.status(401).render('signup', { mes: "Failed, please try again" })
@@ -68,6 +63,30 @@ export const signuping = async (req, res) => {
     } catch (e) {
         console.log(e)     
     }  
+}
+
+// ----------- O T P -----------//
+export const getOtp = async (req, res) => {
+    try {     
+        res.status(200).render('otp')            
+    } catch (e) {
+        console.log(e)
+    }
+}
+export const verifyOtp = async (req, res) => {
+    try {
+        if(req.body.otp.trim() ==''){
+            res.status(401).render('otp',{mes:"Epmty field"})
+        }else if(req.body.otp == req.session.otp){
+            delete req.session.otp
+            res.redirect('/')
+            
+        }else{
+            res.status(401).render('otp',{mes:"Wrong OTP"})
+        }                    
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 // -----------Login------------//
@@ -117,7 +136,7 @@ export const getHome = async(req,res)=>{
 export const userLogout = async(req,res)=>{
     try {
         req.session.destroy()
-        res.redirect('/home')
+        res.redirect('/')
     } catch (err) {
         console.log(err);
     }

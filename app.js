@@ -1,4 +1,4 @@
-import user_route from './routes/userRoute.js'
+ import user_route from './routes/userRoute.js'
 import dbConnect from './config/dbConnect.js'
 import { errorhandler, notFoundHandler } from './middlewares/errorHandling.js'
 import admin_route from './routes/adminRoute.js'
@@ -6,8 +6,6 @@ import express from 'express'
 import session from 'express-session'
 import dotenv from 'dotenv'
 import nocache from 'nocache'
-
-
 
 dotenv.config()
 dbConnect()

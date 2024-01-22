@@ -12,14 +12,14 @@ admin_route.get('/dashboard', isAdmin, getDashboard)
 //--------Product---------------//
 admin_route.get('/productManage', isAdmin, getProductMng)
 admin_route.get('/addProduct', isAdmin, getAddProduct)
-admin_route.post('/addProduct', upload.array('images', 3), prodictAdding)
+admin_route.post('/addProduct', isAdmin, upload.array('images',3), prodictAdding)
 
 //--------customers---------------//
-admin_route.get('/users',isAdmin,getUsers)
+admin_route.get('/users', isAdmin,getUsers)
 
 
 //-------------Logout------------//
-admin_route.get('/adminLogout', adminLogout)
+admin_route.get('/adminLogout', isAdmin, adminLogout)
 
 admin_route.get('*', (req, res) => {
         res.redirect('/admin')

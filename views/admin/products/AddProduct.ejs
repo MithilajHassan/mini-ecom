@@ -35,15 +35,15 @@
             <form class="product-form mt-3 w-75" method="post" enctype="multipart/form-data">
                 <div class="form-group d-flex mb-3">
                     <label for="product-name" class="form-label me-5">Name:</label>
-                    <input type="text" name="name" class="form-control bg-light" placeholder="Enter product name" required>
+                    <input type="text" name="name" class="form-control" placeholder="Enter product name" required>
                 </div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-brand" class="form-label me-5 text-black">Brand:</label>
-                    <input type="text" name="brand" class="form-control bg-light" placeholder="Enter product brand" required>
+                    <input type="text" name="brand" class="form-control" placeholder="Enter product brand" required>
                 </div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-category" class="form-label me-4">Category:</label>
-                    <select class="form-select bg-light ms-1" name="category" id="product-category" required>
+                    <select class="form-select ms-1" name="category" id="product-category" required>
                         <option >Select one</option>
                         <option value="Regular">Regular</option>
                         <option value="Casula">Casual</option>
@@ -52,25 +52,24 @@
                 </div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-description" class="form-label me-2">Description:</label>
-                    <textarea class="form-control bg-light ms-1" name="description" id="product-description" placeholder="Enter product description" required rows="2"></textarea>
+                    <textarea class="form-control ms-1" name="description" id="product-description" placeholder="Enter product description" required rows="2"></textarea>
                 </div>
                 <div></div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-price" class="form-label me-5">Price:</label>
-                    <input type="number" name="price" class="form-control bg-light ms-2" placeholder="Enter product price" required>
+                    <input type="number" name="price" class="form-control ms-2" placeholder="Enter product price" required>
                 </div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-quantity" class="form-label me-4">Quantity:</label>
-                    <input type="number" name="quantity" class="form-control bg-light ms-2" placeholder="Enter product quantity" required>
+                    <input type="number" name="quantity" class="form-control ms-2" placeholder="Enter product quantity" required>
                 </div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-images" class="form-label me-4">Images:</label>
-                    <input type="file" name="images" class="form-control ms-3 bg-light" multiple required>
+                    <input type="file" name="images" class="form-control ms-3" multiple required>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn text-white" style="background-color: #24df24;">ADD PRODUCT</button>
-                </div>
-                
+                    <button type="submit" class="btn text-black fw-bold" style="background-color: #ff6090;">ADD PRODUCT</button>
+                </div>              
             </form>
         </div>
     </section>

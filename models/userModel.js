@@ -22,6 +22,10 @@ const userSchema = new Schema({
         type:Boolean,
         require:true,
         default:false
+    },is_blocked:{
+        type:Boolean,
+        default:false,
+        require:true
     }
 })
 
