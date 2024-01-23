@@ -1,22 +1,24 @@
 import express from "express"
-import { adminGetLogin, adminLogout, getAddProduct, getDashboard, getProductMng, getUsers, prodictAdding, upload, verifyAdmin } from "../controllers/adminController.js"
+import { adminGetLogin, adminLogout, blockUser, getAddProduct, getDashboard, getProductMng, getUsers, productAdding, unBlockUser, upload, verifyAdmin } from "../controllers/adminController.js"
 import { isAdmin, isAdminLogged } from "../middlewares/adminAuth.js"
 const admin_route = express.Router()
 
 
 admin_route.get('/', isAdminLogged, adminGetLogin)
-admin_route.post('/', verifyAdmin)
+admin_route.post('/', isAdminLogged, verifyAdmin)
 
+//--------Dashboard---------------//
 admin_route.get('/dashboard', isAdmin, getDashboard)
 
 //--------Product---------------//
 admin_route.get('/productManage', isAdmin, getProductMng)
 admin_route.get('/addProduct', isAdmin, getAddProduct)
-admin_route.post('/addProduct', isAdmin, upload.array('images',3), prodictAdding)
+admin_route.post('/addProduct', isAdmin, upload.array('images',3), productAdding)
 
 //--------customers---------------//
 admin_route.get('/users', isAdmin,getUsers)
-
+admin_route.post('/block',isAdmin,blockUser)
+admin_route.post('/unblock',isAdmin,unBlockUser)
 
 //-------------Logout------------//
 admin_route.get('/adminLogout', isAdmin, adminLogout)

@@ -1,4 +1,4 @@
- import user_route from './routes/userRoute.js'
+import user_route from './routes/userRoute.js'
 import dbConnect from './config/dbConnect.js'
 import { errorhandler, notFoundHandler } from './middlewares/errorHandling.js'
 import admin_route from './routes/adminRoute.js'
@@ -6,6 +6,7 @@ import express from 'express'
 import session from 'express-session'
 import dotenv from 'dotenv'
 import nocache from 'nocache'
+// import methodOverride from 'method-override'
 
 dotenv.config()
 dbConnect()
@@ -15,6 +16,7 @@ const port =process.env.PORT || 7000
 app.set('view engine','ejs')
 app.set('views',['./views/user','./views/admin'])
 
+// app.use(methodOverride('_method'))
 app.use(nocache())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))

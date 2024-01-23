@@ -19,60 +19,26 @@ body {
     width: 30vw;
 }
 
-.log-drop {
-    padding: 0;
-    background-color: #ffffff;
-    border-radius: 5px;
-    position: absolute;
-    display: none;
-    list-style: none;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    width: 10rem;
-}
-
-.drop-item {
-    align-items: start;
-    text-decoration: none;
-    color: black;
-}
-
-.drop-item:hover {
-    color: #9DBC98;
-}
-
-.nav-drop:hover {
-    background-color: #ff839a;
-}
-
-.nav-drop:hover .log-drop {
-    display: block;
-    background-color: #ffffff;
-}
-
 .nav-hov:hover {
-    background-color: #ff839a;
-}
-
-.nav2-hov:hover {
-    background-color: #ff839a;
+    background-color: #9DBC98;
 }
 
 .form-inp {
     width: 100%;
     border: none;
-    border-bottom: 1px solid #F91F46;
+    border-bottom: 1px solid #9DBC98;
     outline: none;
     margin-top: 20px;
 }
 
 .log-btn {
-    background-color: #F91F46;
+    background-color: #9DBC98;
     border-radius: 10px;
     border: none;
 }
 
 .dis-part1 {
-    background-color: #F91F46;
+    background-color: #9DBC98;
     border-radius: 45px;
 }
 
@@ -86,11 +52,11 @@ body {
 }
 
 .color-l {
-    color: #F91F46;
+    color: #9DBC98;
 }
 
 .btn-color {
-    background-color: #ff6090;
+    background-color: #9efd8f;
 }
 
 /* Admin managements */
@@ -103,7 +69,7 @@ body {
     padding-left: 48px;
 }
 .admn-btn {
-    background-color: #ff6090;
+    background-color: #9DBC98;
     border: none;
     border-radius: 10px;
     color: black;

@@ -40,7 +40,7 @@ export const verifyAdmin = async(req,res)=>{
             const passCheck = await compare(req.body.password,adminData.password)
             if (passCheck) {
                 if(adminData.is_admin === true){
-                    req.session.admin_id=adminData._id
+                    req.session.admin_id = adminData._id
                     res.redirect('/admin/dashboard')       
                 }else{
                     res.status(401).render('adminLogin',{mes:'You are not Admin'})
@@ -74,12 +74,30 @@ export const getUsers = async(req,res)=>{
         console.log(err)
     }
 }
-
+export const blockUser = async(req,res)=>{
+    try {
+        const id = req.body.id
+        const user = await User.findOneAndUpdate({_id:id},{$set:{is_blocked:true}})       
+        res.status(200).redirect('/admin/users')
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const unBlockUser = async(req,res)=>{
+    try {
+        const id = req.body.id
+        const user = await User.findOneAndUpdate({_id:id},{$set:{is_blocked:false}})       
+        res.status(200).redirect('/admin/users')
+    } catch (err) {
+        console.log(err)
+    }
+}
 
 //--------Product Management---------//
 export const getProductMng = async(req,res)=>{
     try {
-        res.status(200).render('products/productManage',{isLogged:true})
+        const product= await Product.find()
+        res.status(200).render('products/productManage',{isLogged:true,product})
     } catch (err) {
         console.log(err)
     }
@@ -91,7 +109,7 @@ export const getAddProduct = async(req,res)=>{
         console.log(err)
     }
 }
-export const prodictAdding = async(req,res)=>{
+export const productAdding = async(req,res)=>{
     try {
         const product = new Product({
             name:req.body.name,
@@ -112,6 +130,7 @@ export const prodictAdding = async(req,res)=>{
         console.log(err)
     }
 }
+
 
 //----------- Logout ------------//
 export const adminLogout = async(req,res)=>{
