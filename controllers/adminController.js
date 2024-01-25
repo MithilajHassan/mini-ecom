@@ -3,6 +3,7 @@ import Product from "../models/productModel.js"
 import {compare} from 'bcrypt'
 import multer from "multer"
 import User from "../models/userModel.js"
+import { render } from "ejs"
 
 //------------Multer--------//
 const storage = multer.diskStorage({
@@ -86,7 +87,7 @@ export const blockUser = async(req,res)=>{
 export const unBlockUser = async(req,res)=>{
     try {
         const id = req.body.id
-        const user = await User.findOneAndUpdate({_id:id},{$set:{is_blocked:false}})       
+        const user = await User.findByIdAndUpdate({_id:id},{$set:{is_blocked:false}})       
         res.status(200).redirect('/admin/users')
     } catch (err) {
         console.log(err)
@@ -130,6 +131,42 @@ export const productAdding = async(req,res)=>{
         console.log(err)
     }
 }
+export const getEditProduct = async(req,res)=>{
+    try {
+        const id = req.query.id   
+        const product = await Product.findById({_id:id})
+        res.status(200).render('products/editProduct',{product})
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const editProduct = async(req,res)=>{
+    try {
+        const {name,brand,category,description,price,quantity,id} = req.body
+        await Product.findByIdAndUpdate({_id:id},{$set:{name,brand,category,description,price,quantity}})
+        res.status(200).redirect('/admin/productManage') 
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const removeProduct = async(req,res)=>{
+    try {
+        const id = req.body.id
+        await Product.findOneAndUpdate({_id:id},{$set:{is_there:false}})       
+        res.status(200).redirect('/admin/productManage')
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const recoverProduct = async(req,res)=>{
+    try {
+        const id = req.body.id
+        await Product.findOneAndUpdate({_id:id},{$set:{is_there:true}})       
+        res.status(200).redirect('/admin/productManage')   
+    } catch (err) {
+        console.log(err)
+    }
+}
 
 
 //----------- Logout ------------//
@@ -141,3 +178,11 @@ export const adminLogout = async(req,res)=>{
         console.log(err);
     }
 }
+
+// export const editProduct = async(req,res)=>{
+//     try {
+        
+//     } catch (err) {
+//         console.log(err)
+//     }
+// }

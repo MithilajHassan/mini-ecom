@@ -58,12 +58,12 @@
                                 <% if(user[i].is_blocked===false){ %>
                                     <form action="/admin/block" method="post">
                                         <input type="hidden" name="id" value="<%= user[i]._id %>">                                       
-                                        <button type="submit" class="btn" style="background-color: #ff3030;">Block</button>
+                                        <button type="submit" class="btn text-black" style="background-color: #ff3737;">Block <i class="fa-solid fa-ban"></i></i></button>
                                     </form>
                                 <% }else{ %>
                                     <form action="/admin/unblock" method="post">
                                         <input type="hidden" name="id" value="<%= user[i]._id %>">
-                                        <button type="submit" class="btn" style="background-color: #ffff00;">Unblock</button>
+                                        <button type="submit" class="btn text-black" style="background-color: #ffff00;">Unblock <i class="fa-solid fa-lock-open"></i></button>
                                     </form>
                                 <% } %>
                             </td>

@@ -100,13 +100,17 @@ export const getLogin = async(req,res)=>{
 export const verifyLogin = async(req,res)=>{
     try {
         const userData = await User.findOne({email:req.body.email})
-        if(userData){
-            const passwordChecking = await bcrypt.compare(req.body.password,userData.password)
-            if(passwordChecking){
-                req.session.user_id = userData._id
-                res.redirect('/')
-            }else {
-                res.status(401).render('login', { mes: "Incorrect Password !!" })
+        if(userData){                   
+            if(userData.is_blocked == true){
+                res.status(403).render('login',{bUser:userData})
+            }else{
+                const passwordChecking = await bcrypt.compare(req.body.password,userData.password) 
+                if(passwordChecking){
+                    req.session.user_id = userData._id
+                    res.redirect('/')
+                }else {
+                    res.status(401).render('login', { mes: "Incorrect Password !!" })
+                }         
             }
         }else{
             res.status(401).render('login', { mes: "Email not exist !!" }) 
@@ -119,7 +123,7 @@ export const verifyLogin = async(req,res)=>{
 // -----------Home page------------//
 export const getHome = async(req,res)=>{
     try {
-        const productData = await Product.find()
+        const productData = await Product.find({is_there:true})
         if(req.session.user_id){
             const userData = await User.findById({_id:req.session.user_id})
             res.status(200).render('home',{user:userData,product:productData})

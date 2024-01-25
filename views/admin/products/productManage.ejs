@@ -5,7 +5,7 @@
     <button class="side-menu border-0 m-1" id="menu-btn"><span class="material-symbols-outlined">menu</span></button>   
     <div class="menu-items m-1 pt-2" id="menu-page">      
         <a href="/admin/dashboard" class="text-black text-decoration-none"><button id="admn-btns" class="admn-btn mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i> Dashboard</button></a>
-        <a href="/admin/products" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-people-fill ms-3"></i> Customers</button></a>
+        <a href="/admin/users" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-people-fill ms-3"></i> Customers</button></a>
         <a href="/admin/productManage" class="text-black text-decoration-none"><button class="admn-btn-A mb-2 w-100 text-start "><i class="bi bi-archive-fill ms-3"></i> Products</button></a>
         <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-file-earmark-fill ms-3"></i> Orders</button></a>
         <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
@@ -18,8 +18,8 @@
     </div>
 </aside>
 <div class="mt-4 p-2 w-75">
-    <a href="/admin/addProduct"><button type="button" class="btn text-black fw-bold" style="background-color: #9efd8f;"><i class="bi bi-plus"></i> Add Products</button></a>
-    <div class="d-flex align-items-center ps-3  mt-2 ">
+    <a href="/admin/addProduct"><button type="button" class="btn text-black fw-bold" style="background-color: #88fa76;"><i class="fa-solid fa-plus"></i> Add Products</button></a>
+    <div class="d-flex align-items-center ps-3  mt-2">
         <table class="table table-bordered table-success">
             <tr>
                 <th colspan="7"></th>
@@ -31,7 +31,7 @@
                 <th>Price</th>
                 <th>Quantity</th>                
                 <th>Image</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
             <% if(product.length > 0){ %>
                 <% product.forEach((item)=>{ %>                   
@@ -52,15 +52,26 @@
                             <%= item.quantity %>
                         </td>
                         <td>
-                            <img src="<%= item.images[0].path.replace('public', '') %>" style="width: 20%;">
+                            <% item.images.forEach((img)=>{ %> 
+                                <img src="<%= img.path.replace('public', '') %>" style="width: 14%;">
+                            <% }) %> 
+                            
                         </td>
                         <td>
+                            <div class="d-flex">
+                            <a href="/admin/editProduct?id=<%= item._id %>"><button type="submit" class="btn btn-primary me-1"><i class="fa-solid fa-pen"></i></button></a>
                             <% if(item.is_there === true){ %>
-                                <form action="" method="">
-                                    <input type="hidden" name="id" value="<%= item._id %>">                                       
-                                    <button type="submit" class="btn" style="background-color: #ff3030;">delete</button>
+                                <form action="/admin/removeProduct" method="post">
+                                    <input type="hidden" name="id" value="<%= item._id %>">   
+                                    <button type="submit" class="btn" style="background-color: #ff3030;"><i class="fa-solid fa-trash-can"></i></button>                                                                       
                                 </form>
-                            <% } %>                           
+                            <% }else{ %>  
+                                <form action="/admin/recoverProduct" method="post">
+                                    <input type="hidden" name="id" value="<%= item._id %>">                                       
+                                    <button type="submit" class="btn" style="background-color: #ffff00;"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                                </form>
+                            <% } %>
+                            </div>
                         </td>
                     </tr>
                     <% }) %>                         

@@ -17,6 +17,11 @@ app.set('view engine','ejs')
 app.set('views',['./views/user','./views/admin'])
 
 // app.use(methodOverride('_method'))
+// (req, res, next) => {
+//     //setup cache
+//     res.set("Cache-Control", "no-store");
+//     next();
+//   }
 app.use(nocache())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
