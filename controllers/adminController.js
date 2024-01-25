@@ -4,6 +4,7 @@ import {compare} from 'bcrypt'
 import multer from "multer"
 import User from "../models/userModel.js"
 import { render } from "ejs"
+import Category from "../models/categoryModel.js"
 
 //------------Multer--------//
 const storage = multer.diskStorage({
@@ -135,7 +136,7 @@ export const getEditProduct = async(req,res)=>{
     try {
         const id = req.query.id   
         const product = await Product.findById({_id:id})
-        res.status(200).render('products/editProduct',{product})
+        res.status(200).render('products/editProduct',{product,isLogged:true})
     } catch (err) {
         console.log(err)
     }
@@ -168,6 +169,67 @@ export const recoverProduct = async(req,res)=>{
     }
 }
 
+//--------Category Management--------//
+export const getCategoryMng = async(req,res)=>{
+    try {
+        const categoryData = await Category.find()
+        res.status(200).render('category',{category:categoryData,isLogged:true})
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const addCategory = async(req,res)=>{
+    try {
+        const name = req.body.name
+        const category = new Category({ name:name })
+        const categoryData = await category.save()
+        if (categoryData) {
+            res.redirect('/admin/categoryManage')
+        } else {
+            res.send('category is not added')
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const removeCategory = async(req,res)=>{
+    try {
+        const id = req.body.id
+        await Category.findOneAndUpdate({_id:id},{$set:{status:false}})       
+        res.redirect('/admin/categoryManage')
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const recoverCategory = async(req,res)=>{
+    try {
+        const id = req.body.id
+        await Category.findOneAndUpdate({_id:id},{$set:{status:true}})       
+        res.redirect('/admin/categoryManage')
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const getEditCategory = async(req,res)=>{
+    try {
+        const id = req.query.id
+        const ctgryId = await Category.findOne({_id:id})
+        const categoryData = await Category.find()
+        res.status(200).render('editCategory',{ctgryId,category:categoryData,isLogged:true})
+    } catch (err) {
+        console.log(err)
+    }
+}
+export const editCategory = async(req,res)=>{
+    try {
+        const {name,id} = req.body
+        await Category.findOneAndUpdate({_id:id},{$set:{name}})   
+        res.redirect('/admin/categoryManage') 
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 
 //----------- Logout ------------//
 export const adminLogout = async(req,res)=>{
@@ -179,7 +241,7 @@ export const adminLogout = async(req,res)=>{
     }
 }
 
-// export const editProduct = async(req,res)=>{
+// export const getEditCategory = async(req,res)=>{
 //     try {
         
 //     } catch (err) {

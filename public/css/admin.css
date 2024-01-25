@@ -99,6 +99,17 @@ body {
     height: 30px;
     background-color: #d9d8d8;
 }
+.add-ctgry{
+    background-color: #d1e7dd; 
+    border-radius: 10px;
+    width:  35rem !important;
+}
+.ctgry-list{
+    background-color: #d1e7dd; 
+    border-radius: 10px;
+    width:  40rem !important;
+}
+
 
 
 

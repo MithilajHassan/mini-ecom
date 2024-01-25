@@ -1,4 +1,4 @@
-import {getHome, getLogin, getOtp, loadSignup, signuping, userLogout, verifyLogin, verifyOtp}  from '../controllers/userController.js'
+import {forgotpass, getForgotpass, getHome, getLogin, getOtp, loadSignup, signuping, userLogout, verifyLogin, verifyOtp}  from '../controllers/userController.js'
 
 import express from 'express'
 import { isOtpSent, is_logged, is_logout } from '../middlewares/auth.js'
@@ -10,6 +10,10 @@ user_route.get('/',getHome)
 //------User Loign-------//
 user_route.get('/login',is_logged,getLogin)
 user_route.post('/login',is_logged,verifyLogin)
+
+//--------forgot password-------//
+user_route.get('/forgot',is_logged,getForgotpass)
+user_route.post('/forgot',is_logged,forgotpass)
 
 //------User Signup-------//
 user_route.get('/signup',is_logged,loadSignup)

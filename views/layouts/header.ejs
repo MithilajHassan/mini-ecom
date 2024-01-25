@@ -67,11 +67,13 @@
         </div>
     </div>
 </nav>
+
+<% if(typeof category !== 'undefined'){ %>
 <div class="sub-nav bg-white z-1 fixed-top py-2">
-    <div class="container d-flex justify-content-center ">
-        <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href="">Regular</a>
-        <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href="">Casuals</a>
-        <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href="">Formals</a>
-    </div>
+    <div class="container d-flex justify-content-center">
+        <% category.forEach((value)=>{ %>
+            <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href=""><%= value.name %></a>
+        <% }) %> 
+    </div>   
 </div>
-    
+<% } %>

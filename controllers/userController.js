@@ -1,6 +1,7 @@
 import {generateOTP, transporter } from '../middlewares/sendMail.js'
 import Product from '../models/productModel.js'
 import User from '../models/userModel.js'
+import Category from '../models/categoryModel.js'
 import bcrypt from 'bcrypt'
 
 // ----------Password bcrypting-----------//
@@ -120,15 +121,39 @@ export const verifyLogin = async(req,res)=>{
     }
 } 
 
+//--------forgot password-------//
+export const getForgotpass = async(req,res)=>{
+    try {    
+        res.status(200).render('forgot')
+    } catch (err) {
+        console.log(err);
+    }
+}
+export const forgotpass = async(req,res)=>{
+    try {
+        const email = req.body.email
+        const userEmail = await User.findOne({email})
+        if (userEmail) {
+            
+            res.status(200).render('otp')
+        } else {
+            res.status(200).render('forgot',{mes:'Email is incorrect'})
+        }        
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 // -----------Home page------------//
 export const getHome = async(req,res)=>{
     try {
+        const categoryData = await Category.find({status:true})
         const productData = await Product.find({is_there:true})
         if(req.session.user_id){
             const userData = await User.findById({_id:req.session.user_id})
-            res.status(200).render('home',{user:userData,product:productData})
+            res.status(200).render('home',{user:userData,product:productData,category:categoryData})
         }else{
-            res.status(200).render('home',{product:productData})
+            res.status(200).render('home',{product:productData,category:categoryData})
         }
     } catch (err) {
         console.log(err.message)
