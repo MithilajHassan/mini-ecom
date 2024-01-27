@@ -1,5 +1,23 @@
-<%- include('../layouts/header') -%>
-
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="web icon" href="/img/logo.avif">
+        <title>Luminova</title>
+        <link rel="stylesheet" href="/css/style.css" type="text/css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <script src="https://kit.fontawesome.com/2631f6b4b6.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand ms-3" href="/">
+                    <img src="/img/Logo.avif" width="40px" class="d-inline-block ">
+                </a>
+            </div>
+        </nav>
  <!--------------------------- section of body --------------------------->
  <section class="bg-clr text-white d-flex align-items-center">
     <% if(typeof bUser !== 'undefined'){ %>
@@ -10,7 +28,7 @@
             </div>
         </div>
     <% } %> 
-    <div class="container mt-3  d-flex justify-content-center">
+    <div class="container mt-3 d-flex justify-content-center">
         <div class="log-box-ful row bg-white text-black">
             <div class="dis-part1 col-md-4 pt-5 pb-2 ">
                 <h2 class="fw-bold mb-3 ">Login</h2>
@@ -19,16 +37,19 @@
             </div>
             <div class="col-md-8  my-auto text-center">
                 <% if(locals.mes){ %>
-                    <p class="text-primary"><%= mes %></p>
+                    <p class="text-primary mt-3"><%= mes %></p>
                 <% } %> 
-                <form class="mb-3" method="post">
+                <form method="post">
                     <input class="form-inp" type="email" name="email" placeholder="Enter email" required>
                     <br>
-                    <input class="form-inp" type="password" name="password" placeholder="Enter password" required>
+                    <input class="form-inp" type="password" name="password" id="password-inp" placeholder="Enter password" required>
+
+                    <div class="text-start mt-1"><input type="checkbox" placeholder="show password" onclick="showPass()"> Show Password</div>
+                    
                     <button type="submit" class="log-btn w-100 mt-3 text-black">Login</button>
                 </form>
-                <div class="text-start"><small ><a href="/forgot">Forgot password?</a></small></div>
-                <small class="d-block text-dark mt-5">New user?<a href="/signup">Signup</a></small>      
+                <div class="text-start mb-5"><small ><a href="/forgot">Forgot password?</a></small></div>
+                <div class="pt-4"><small class="d-block text-dark">New user?<a href="/signup">Signup</a></small></div>      
             </div>
         </div>
     </div>

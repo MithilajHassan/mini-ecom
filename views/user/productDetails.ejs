@@ -1,0 +1,36 @@
+<%- include('../layouts/header') -%>
+
+<!--------------------------- section of body --------------------------->
+<div class="container py-3 z-0 bg-white p-3">
+    <div class="row justify-content-center">
+        <div class="col-md-5">         
+            <div class="zoom-div d-flex justify-content-center border-end" >
+                <img src="<%= product.images[0].path.replace('public', '') %>" class="zoom-img img-fluid w-75"> 
+            </div>
+            <!-- <div class="d-flex"></div>
+            <% product.images.forEach( (value) =>{ %>
+                <div class="w-15">
+                    <img src="<%= value.path.replace('public', '') %>"  class="object-fit-contain border rounded">
+                </div>
+            <% }) %>
+            </div> -->
+        </div> 
+             
+        <div class="col-md-7">
+            <div class="mt-5">
+                <h4 class="ms-3 " style="color: #a3a2a2;"><b><%= product.brand %></b></h4>
+                <h5 class="ms-3 "><b><%= product.name %></b></h5>
+                <h4 class="ms-3 fw-bold text-success">₹<%= product.price %></h4>
+                <p class="ms-3 text-black"><%= product.description %></p>
+            </div>
+                
+            <div class="mt-5">
+                <button class="btn fw-bold" style="background-color: #ff9f00;">ADD TO CART</button>
+                <button class="btn fw-bold" style="background-color: #fb641b;">ADD TO WISHLIST</button>
+            </div>
+        </div>      
+     </div>
+</div>
+
+
+<%- include('../layouts/footer') -%>

@@ -19,3 +19,9 @@ menuBtn.addEventListener('click',()=>{
         logoutBtn.style.display = "none"
     }
 })
+function showPass (){
+    const passwordInput = document.getElementById('password-inp')
+    const cnfrmPass = document.getElementById('cnfrmPass-inp')
+    passwordInput.getAttribute('type') === 'password' ? passwordInput.setAttribute('type','text') : passwordInput.setAttribute('type','password')
+    cnfrmPass.getAttribute('type') === 'password' ? cnfrmPass.setAttribute('type','text') : cnfrmPass.setAttribute('type','password')
+}

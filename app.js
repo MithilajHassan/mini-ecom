@@ -16,13 +16,11 @@ const port =process.env.PORT || 7000
 app.set('view engine','ejs')
 app.set('views',['./views/user','./views/admin'])
 
-// app.use(methodOverride('_method'))
-// (req, res, next) => {
-//     //setup cache
-//     res.set("Cache-Control", "no-store");
-//     next();
-//   }
-app.use(nocache())
+//setup cache
+app.use((req, res, next) => {   
+    res.set("Cache-Control", "no-store")
+    next()
+})
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(express.static('public'))

@@ -1,7 +1,8 @@
 import express from "express"
-import { addCategory, adminGetLogin, adminLogout, blockUser, editCategory, editProduct, getAddProduct, getCategoryMng, getDashboard, getEditCategory, getEditProduct, getProductMng, getUsers,
-         productAdding, recoverCategory, recoverProduct, removeCategory, removeProduct, unBlockUser, upload, verifyAdmin } from "../controllers/adminController.js"
+import { addCategory, adminGetLogin, adminLogout, blockUser, editCategory, getCategoryMng, getDashboard, getEditCategory, getUsers,
+        recoverCategory, removeCategory, unBlockUser, upload, verifyAdmin } from "../controllers/adminController.js"
 import { isAdmin, isAdminLogged } from "../middlewares/adminAuth.js"
+import { editProduct, getAddProduct, getEditProduct, getProductMng, productAdding, recoverProduct, removeProduct } from "../controllers/productController.js"
 const admin_route = express.Router()
 
 

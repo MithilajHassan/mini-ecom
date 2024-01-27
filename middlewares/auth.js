@@ -16,7 +16,7 @@ export const is_logout = (req,res,next)=>{
 
 //------OTP page checking
 export const isOtpSent = (req,res,next)=>{
-    if(req.session.otp){
+    if(req.session.otpSented){
         next()
     }else{
         res.redirect('/')
