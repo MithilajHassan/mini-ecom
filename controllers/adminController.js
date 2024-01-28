@@ -1,5 +1,4 @@
 import Admin from "../models/userModel.js"
-import Product from "../models/productModel.js"
 import {compare} from 'bcrypt'
 import multer from "multer"
 import User from "../models/userModel.js"
@@ -79,8 +78,6 @@ export const blockUser = async(req,res)=>{
     try {
         const id = req.body.id
         await User.findOneAndUpdate({_id:id},{$set:{is_blocked:true}})  
-        
-          console.log(sessionStorage.getItem(id))
         res.status(200).redirect('/admin/users')
     } catch (err) {
         console.log(err)
@@ -161,10 +158,10 @@ export const editCategory = async(req,res)=>{
 //----------- Logout ------------//
 export const adminLogout = async(req,res)=>{
     try {
-        req.session.destroy()
+        req.session.admin_id = null
         res.redirect('/admin')
     } catch (err) {
-        console.log(err);
+        console.log(err)
     }
 }
 

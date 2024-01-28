@@ -25,28 +25,29 @@ export const loadSignup = async (req, res) => {
 }
 export const signuping = async (req, res) => {
     try {
-        const existingEmail = await User.findOne({email:req.body.email})
-        if (req.body.name.trim()===''||req.body.email.trim()===''||req.body.password.trim()===''||req.body.m_number.trim()===''){
+        const {name,m_number,email,password,confirmPass} = req.body 
+        const existingEmail = await User.findOne({email})
+        if (name.trim()===''||email.trim()===''||password.trim()===''||m_number.trim()===''){
             res.render('signup', { mes:"Inputs cannot be empty"}) 
         } else if (existingEmail) {
             res.status(409).render('signup', { mes: 'Email already exist' })
         } else {
-            const sPassword = await securePassword(req.body.password)
-            const user = new User({
-                name: req.body.name,
-                mobile_number: req.body.m_number,
-                email: req.body.email,
-                password: sPassword,
-            })
-            const userData = await user.save()
-            if (userData) {               
+            if(password === confirmPass){
+                const sPassword = await securePassword(password)
                 const OTP = await generateOTP()
-                await User.findByIdAndUpdate({_id:userData._id},{$set:{otp:OTP}})
-                sentMail(userData.email,OTP)
+                const user = new User({
+                    name: name,
+                    mobile_number: m_number,
+                    email: email,
+                    password: sPassword,
+                    otp:OTP
+                })
+                req.session.data = user             
+                sentMail(email,OTP)
                 req.session.otpSented = true
                 res.redirect('/verifyOtp')
-            } else {
-                res.status(401).render('signup', { mes: "Failed, please try again" })
+            }else{
+                res.status(401).render('signup', { mes: "Passwords are mismatch"})
             }
         }
     } catch (e) {
@@ -68,11 +69,18 @@ export const verifyOtp = async (req,res) => {
         if(enteredOTP ==''){
             res.status(401).render('otp',{mes:"Epmty field"})
         }else{
-            const userData = await User.findOne({otp:enteredOTP})
-            if (userData) {
-                req.session.user_id = userData._id
+            const userData = req.session.data
+            if (userData.otp == enteredOTP) {
+                const user  = new User({
+                    name: userData.name,
+                    mobile_number: userData.mobile_number,
+                    email: userData.email,
+                    password: userData.password,
+                    otp:0
+                }) 
+                const userSave = await user.save()
+                req.session.user_id = userSave._id
                 delete req.session.otpSented
-                await User.findOneAndUpdate({otp:enteredOTP},{$set:{otp:0}})
                 res.redirect('/')
             } else {
                 res.status(401).render('otp',{mes:"Wrong OTP"})
@@ -85,8 +93,8 @@ export const verifyOtp = async (req,res) => {
 
 // -----------Login------------//
 export const getLogin = async(req,res)=>{
-    try {
-        res.status(200).render('login')     
+    try {      
+        res.status(200).render('login')
     } catch (err) {
         console.log(err)
     }
@@ -184,7 +192,11 @@ export const getHome = async(req,res)=>{
         const productData = await Product.find({is_there:true})
         if(req.session.user_id){
             const userData = await User.findById({_id:req.session.user_id})
-            res.status(200).render('home',{user:userData,product:productData,category:categoryData})
+            if(userData.is_blocked == true){
+                res.status(403).render('login',{bUser:userData})
+            }else{
+                res.status(200).render('home',{user:userData,product:productData,category:categoryData})
+            }
         }else{
             res.status(200).render('home',{product:productData,category:categoryData})
         }
@@ -197,7 +209,7 @@ export const getHome = async(req,res)=>{
 // ----------- Logout ------------//
 export const userLogout = async(req,res)=>{
     try {
-        req.session.destroy()
+        req.session.user_id = null
         res.redirect('/')
     } catch (err) {
         console.log(err);

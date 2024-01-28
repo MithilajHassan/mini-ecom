@@ -10,11 +10,14 @@ export const productDetails = async(req,res)=>{
         const productData = await Product.findById({_id:id})
         if(req.session.user_id){
             const userData = await User.findById({_id:req.session.user_id})
-            res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData})
+            if(userData.is_blocked == true){
+                res.status(403).render('login',{bUser:userData})
+            }else{
+                res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData})
+            }           
         }else{
             res.status(200).render('productDetails',{product:productData,category:categoryData})
-        }
-       
+        }      
     } catch (err) {
         console.log(err)
     }
