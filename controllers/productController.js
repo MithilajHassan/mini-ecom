@@ -1,42 +1,42 @@
 import Category from "../models/categoryModel.js"
 import Product from "../models/productModel.js"
-import User from "../models/userModel.js"
-
-//-------user sdie product page-------//
-export const productDetails = async(req,res)=>{
-    try {
-        const id = req.params.id
-        const categoryData = await Category.find({status:true})
-        const productData = await Product.findById({_id:id})
-        if(req.session.user_id){
-            const userData = await User.findById({_id:req.session.user_id})
-            if(userData.is_blocked == true){
-                res.status(403).render('login',{bUser:userData})
-            }else{
-                res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData})
-            }           
-        }else{
-            res.status(200).render('productDetails',{product:productData,category:categoryData})
-        }      
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-
 
 //--------Product Management---------//
 export const getProductMng = async(req,res)=>{
     try {
-        const product= await Product.find()
-        res.status(200).render('products/productManage',{isLogged:true,product})
+        let search = ''
+        if(req.query.search){
+            search = req.query.search
+        }
+        let page = 1
+        if(req.query.page){
+            page = parseInt(req.query.page)
+        }
+        const limit = 2
+        const product= await Product.find({
+            name: { $regex:`.*${search}.*`, $options: 'i' }
+        })
+        .limit(limit)
+        .skip( (page-1) * limit)
+
+        const productCount = await Product.find({
+            name: { $regex:`.*${search}.*`, $options: 'i' }
+        }).countDocuments()
+        res.status(200).render('products/productManage',{
+            isLogged: true,
+            product,
+            totalPages: Math.ceil(productCount/limit),
+            currentPage: page,
+            search: search || '',
+        })
     } catch (err) {
         console.log(err)
     }
 }
 export const getAddProduct = async(req,res)=>{
     try {
-        res.status(200).render('products/addProduct',{isLogged:true})
+        const category = await Category.find({status:true})
+        res.status(200).render('products/addProduct',{isLogged:true,category})
     } catch (err) {
         console.log(err)
     }
@@ -52,12 +52,8 @@ export const productAdding = async(req,res)=>{
             quantity:req.body.quantity,
             images:req.files
         })
-        const productData = await product.save()
-        if (productData) {
-            res.redirect("/admin/productManage")
-        }else{
-            res.send('failed please try again')
-        }
+        await product.save()
+        res.redirect("/admin/productManage")
     } catch (err) {
         console.log(err)
     }

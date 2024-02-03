@@ -1,9 +1,9 @@
-const menuBtn = document.getElementById('menu-btn')
+
 const aside = document.getElementById('aside-menu')
 const menuItems = document.getElementById('menu-page')
 const logoutBtn = document.getElementById('l-out-btn')
 
-menuBtn.addEventListener('click',()=>{   
+const asideShow = ()=>{   
     if(menuItems.style.display == "none"){
         menuItems.style.display = "block" 
         aside.style.width = '60vw'
@@ -18,10 +18,18 @@ menuBtn.addEventListener('click',()=>{
         // aside.style.height = '85vh'
         logoutBtn.style.display = "none"
     }
-})
-function showPass (){
-    const passwordInput = document.getElementById('password-inp')
-    const cnfrmPass = document.getElementById('cnfrmPass-inp')
-    passwordInput.getAttribute('type') === 'password' ? passwordInput.setAttribute('type','text') : passwordInput.setAttribute('type','password')
-    cnfrmPass.getAttribute('type') === 'password' ? cnfrmPass.setAttribute('type','text') : cnfrmPass.setAttribute('type','password')
 }
+
+const passwordInput = document.getElementById('password-inp')
+function showPass (){  
+    passwordInput.getAttribute('type') === 'password' ? passwordInput.setAttribute('type','text') : passwordInput.setAttribute('type','password')
+}
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+//     checkboxes.forEach(checkbox => {
+//         checkbox.addEventListener('change', function () {
+//             document.getElementById('filterForm').submit()
+//         })
+//     })
+// })

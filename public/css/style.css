@@ -83,12 +83,7 @@ body{
 .main-color{
     background-color: #ff839a;
 }
-.zoom-div{
-    overflow: hidden
-}
-.zoom-img{
-    transition: 0.5s all ease-in-out;
-}
-.zoom-div:hover .zoom-img{
-    transform: scale(1.5);
+.resend-btn{
+    border: none;
+    background: none;
 }

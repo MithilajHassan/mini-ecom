@@ -33,7 +33,7 @@ export const sentMail = async (userEmail,otp) => {
 
     await transporter.sendMail(mailOptions, (error, info) => {
         try {
-            console.log('Email sent: ' + info.response)
+           console.log(info.response)
         } catch (error) {
             console.log(error)
         }

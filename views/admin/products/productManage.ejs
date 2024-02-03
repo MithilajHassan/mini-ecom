@@ -2,7 +2,7 @@
 
 <section class="container-fluid p-0 d-flex">
 <aside class="side-bar mt-4 " id="aside-menu">
-    <button class="side-menu border-0 m-1" id="menu-btn"><span class="material-symbols-outlined">menu</span></button>   
+    <button class="side-menu border-0 m-1" id="menu-btn"  onclick="asideShow()"><span class="material-symbols-outlined">menu</span></button>   
     <div class="menu-items m-1 pt-2" id="menu-page">      
         <a href="/admin/dashboard" class="text-black text-decoration-none"><button id="admn-btns" class="admn-btn mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i> Dashboard</button></a>
         <a href="/admin/users" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-people-fill ms-3"></i> Customers</button></a>
@@ -20,6 +20,7 @@
 <div class="mt-4 p-2 w-75">
     <a href="/admin/addProduct"><button type="button" class="btn text-black fw-bold" style="background-color: #58d645;"><i class="fa-solid fa-plus"></i> Add Products</button></a>
     <div class="d-flex align-items-center ps-3  mt-2">
+        <div class="table-responsive">
         <table class="table table-bordered table-success">
             <tr>
                 <th colspan="7"></th>
@@ -82,6 +83,26 @@
                             <% } %>
         </table>
     </div>
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+          <li class="page-item">
+            <a class="page-link" href="<%= currentPage > 1 ? `?page=${currentPage - 1}&search=${search}` : '#' %>" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+              <a class="page-link" href="<%= `?page=${i}` %>"><%= i %></a>
+            </li>
+          <% } %>
+          <li class="page-item">
+            <a class="page-link" href="<%= currentPage < totalPages ? `?page=${currentPage + 1}&search=${search}` : '#' %>" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
 </div>
 </section>
 

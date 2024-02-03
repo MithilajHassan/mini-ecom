@@ -25,6 +25,9 @@ const productSchema = new Schema({
     },is_there:{
         type:Boolean,
         default:true
+    },createdAt: {
+        type: Date,
+        default: Date.now,
     }
 })
 

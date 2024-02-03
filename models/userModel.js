@@ -28,8 +28,7 @@ const userSchema = new Schema({
         require:true
     },otp:{
         type:Number,
-        default:0,
-        require:true
+        default:null,
     }
 })
 

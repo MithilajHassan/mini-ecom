@@ -2,7 +2,7 @@
 
     <section class="container-fluid p-0 d-flex">
         <aside class="side-bar mt-4 " id="aside-menu">
-            <button class="side-menu border-0 m-1" id="menu-btn"><span
+            <button class="side-menu border-0 m-1" id="menu-btn" onclick="asideShow()"><span
                     class="material-symbols-outlined">menu</span></button>
             <div class="menu-items m-1 pt-2" id="menu-page">
                 <a href="/admin/dashboard" class="text-black text-decoration-none"><button id="admn-btns"
@@ -30,7 +30,9 @@
                         Logout</button></a>
             </div>
         </aside>
-        <div class="d-flex align-items-center ps-5 w-75 table-responsive">
+        <div class="d-flex flex-column ps-5 w-75">
+            <div class="my-3"><h3>All Customers</h3></div>
+            <div class="table-responsive">
             <table class="table table-bordered rounded-4 table-success">
                 <tr>
                     <th colspan="4"></th>
@@ -78,6 +80,26 @@
                                 </tr>
                                 <% } %>
             </table>
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end">
+              <li class="page-item">
+                <a class="page-link" href="<%= currentPage > 1 ? `?page=${currentPage - 1}&search=${search}` : '#' %>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                  <a class="page-link" href="<%= `?page=${i}` %>"><%= i %></a>
+                </li>
+              <% } %>
+              <li class="page-item">
+                <a class="page-link" href="<%= currentPage < totalPages ? `?page=${currentPage + 1}&search=${search}` : '#' %>" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
     </section>
 

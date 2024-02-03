@@ -6,7 +6,6 @@ import express from 'express'
 import session from 'express-session'
 import dotenv from 'dotenv'
 import nocache from 'nocache'
-// import MongoStore from 'connect-mongo'
 // import methodOverride from 'method-override'
 
 dotenv.config()
@@ -25,7 +24,6 @@ app.use(session({
     secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:false,
-    // store:new MongoStore({mongoUrl:process.env.MONGO_URI})
 }))
 
 app.use('/',user_route)

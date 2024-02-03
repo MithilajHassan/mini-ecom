@@ -1,23 +1,75 @@
 <%- include('../layouts/header') -%>
 
 <!--------------------------- section of body --------------------------->
-<div class="container py-3 z-0">
-    <div class="row justify-content-center">
-        <% product.forEach( (value) =>{ %>
-                 
-         <div class="card m-3 border-0" style="width: 16rem;">
-            <a href="/product/<%= value._id %>" class="text-decoration-none">  
-             <img src="<%= value.images[0].path.replace('public', '') %>" class="card-img-top">
-             <div class="card-body px-0 pt-1">
-               <p class="m-0" style="color: #9b9a9a;"><b><%= value.brand %></b></p>
-               <p class="m-0 text-nowrap overflow-hidden text-black"><b><%= value.name %></b></p>
-               <p class="m-0 fw-bold text-success">₹<%= value.price %></p>
-             </div>
-            </a> 
-         </div>
-       
-        <% }) %>    
-     </div>
+<div class="container-fluid py-3 z-0">
+  <div class="row">
+    <div class="col-md-2">
+      <h5 class="mb-3">Filters</h5>
+      <div class="list-group">
+        <a href="?filter=" class="list-group-item list-group-item-action active">All Brands</a>
+        <a href="?filter=TheIndianGarageCo" class="list-group-item list-group-item-action">The Indian Garage Co</a>
+        <a href="?filter=THEBEARHOUSE" class="list-group-item list-group-item-action">THE BEAR HOUSE</a>
+        <a href="?filter=" class="list-group-item list-group-item-action active">All Prices</a>
+        <a href="?filter=under500" class="list-group-item list-group-item-action">Under 500</a>
+        <a href="?filter=above500" class="list-group-item list-group-item-action">Abouve 500</a>
+        </div>
+    </div>
+    <div class="col-md-10">
+      <div class="d-flex justify-content-end mb-3">
+        <div class="dropdown" style="position: relative;">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Sort By
+          </button>
+          <div class="dropdown-menu bg-secondary text-white" aria-labelledby="dropdownMenuButton" style="border-radius: 0; box-shadow: none;">
+            <a class="dropdown-item" href="/?sort=date">Newest First</a>
+            <a class="dropdown-item" href="/?sort=lowToHigh">Price -- Low to High</a>
+            <a class="dropdown-item" href="/?sort=highToLow">Price -- High to Low</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <% if (noProductsFound) { %>
+          <div class="py-5">
+            <h4 class="text-center text-black my-5">No products found.</h4>
+          </div>
+        <% } else { %>
+          <% product.forEach( (value) =>{ %>
+            <div class="card mx-3 mt-2 mb-1 border-0" style="width: 16rem;">
+              <a href="/product/<%= value._id %>" class="text-decoration-none">
+                <img src="<%= value.images[0].path.replace('public', '') %>" class="card-img-top">
+                <div class="card-body px-0 pt-1">
+                  <p class="m-0" style="color: #9b9a9a;"><b><%= value.brand %></b></p>
+                  <p class="m-0 text-nowrap overflow-hidden text-black"><b><%= value.name %></b></p>
+                  <p class="m-0 fw-bold text-success">₹<%= value.price %></p>
+                </div>
+              </a>
+            </div>
+          <% }) %>
+        <% } %>
+
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-end">
+            <li class="page-item">
+              <a class="page-link" href="<%= currentPage > 1 ? `?page=${currentPage - 1}&search=${search}&sort=${sortOption}&filter=${filterOption}` : '#' %>" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="<%= `?page=${i}` %>"><%= i %></a>
+              </li>
+            <% } %>
+            <li class="page-item">
+              <a class="page-link" href="<%= currentPage < totalPages ? `?page=${currentPage + 1}&search=${search}&sort=${sortOption}&filter=${filterOption}` : '#' %>" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
 </div>
 
 
