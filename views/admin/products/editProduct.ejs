@@ -30,24 +30,48 @@
                         Logout</button></a>
             </div>
         </aside>
-        <div class="form-div mt-2 p-2 d-flex flex-column align-items-center w-75">
-            <h4 class="mt-3 fw-bold">Edit Product</h4>
-            <form class="product-form mt-3 w-75" method="post">
+
+        <div class="form-div p-2 d-flex flex-column align-items-center w-75">
+            <h4 class="mt-2 fw-bold">Edit Product</h4>
+            <p class="text-center text-danger p-0 mb-2" id="errMsg"></p>
+            <div class="row">
+            <div class="d-flex justify-content-center my-1">
+                <% product.images.forEach( (img,i) =>{ %>
+                    <div id="image-<%= i %>" class="border border-dark px-2 ms-2">
+                        <img src="/productImgs/<%= img.filename %>"  class="object-fit-contain" style="width: 3rem;">
+                        <button class="btn btn-primary" onclick="imgInpCall('<%= i %>')">Edit</button>
+                        <form action="/admin/editImage" method="post" id="img-form-<%= i %>" enctype="multipart/form-data">
+                            <input type="hidden" name="productId" value="<%= product._id %>" >
+                            <input type="hidden" name="imgIndex" value="<%= i %>" >
+                            <input type="file" name="image" id="img-upload-inp-<%= i %>" onchange="editImg('<%= i %>')" hidden>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+            </div>
+            <form class="product-form mt-2 w-75" onsubmit="return validate()" method="post">
                 <div class="form-group d-flex mb-3">
                     <label for="product-name" class="form-label me-5">Name:</label>
-                    <input value="<%= product.name %>" type="text" name="name" class="form-control" placeholder="Enter product name" required>
+                    <input value="<%= product.name %>" type="text" id="pName" name="name" class="form-control" placeholder="Enter product name" required>
                 </div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-brand" class="form-label me-5 text-black">Brand:</label>
-                    <input value="<%= product.brand %>" type="text" name="brand" class="form-control" placeholder="Enter product brand" required>
+                    <input value="<%= product.brand %>" type="text" id="pBrand" name="brand" class="form-control" placeholder="Enter product brand" required>
                 </div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-category" class="form-label me-4">Category:</label>
                     <select class="form-select ms-1" name="category" id="product-category" required>
-                        <option value="<%= product.category %>"><%= product.category %></option>
-                        <option value="Regular">Regular</option>
-                        <option value="Casula">Casual</option>
-                        <option value="Formal">Formal</option>
+                        <% if(typeof category !== "undefined" && category.length > 0){ %>
+                            <% category.forEach((val)=>{ %>
+                                <% if (String(val._id) === String(product.category)) { %>
+                                    <option value="<%= val._id %>" selected><%= val.name %></option>
+                                <% } else { %>
+                                    <option value="<%= val._id %>"><%= val.name %></option>
+                                <% } %>
+                            <% }) %>
+                        <% } else { %>
+                            <option disabled selected>No categories available</option>
+                        <% } %>
                     </select>
                 </div>
                 <div class="form-group d-flex mb-3">
@@ -57,14 +81,15 @@
                 <div></div>
                 <div class="form-group d-flex mb-3">
                     <label for="product-price" class="form-label me-5">Price:</label>
-                    <input value="<%= product.price %>" type="number" name="price" class="form-control ms-2" placeholder="Enter product price" required>
+                    <input value="<%= product.price %>" type="number" id="pPrice" name="price" class="form-control ms-2" placeholder="Enter product price" required>
                 </div>
-                <div class="form-group d-flex mb-3">
+                <div class="form-group d-flex mb-2">
                     <label for="product-quantity" class="form-label me-4">Quantity:</label>
-                    <input value="<%= product.quantity %>" type="number" name="quantity" class="form-control ms-2" placeholder="Enter product quantity" required>
+                    <input value="<%= product.quantity %>" type="number" id="pQuanty" name="quantity" class="form-control ms-2" placeholder="Enter product quantity" required>
                 </div>
-                <input name="id" value="<%= product._id %>" type="hidden">
-                <div class="d-flex justify-content-center">
+                
+                <input type="hidden" name="id" value="<%= product._id %>">
+                <div class="d-flex justify-content-center mb-3">
                     <button type="submit" class="btn text-black fw-bold" style="background-color: #58d645;">EDIT PRODUCT</button>
                 </div>              
             </form>
@@ -72,4 +97,170 @@
     </section>
 
 
-    <%- include('../layouts/footer') -%>
+<!--------------------------- footer  --------------------------->
+<footer class="text-center text-lg-start text-dark" style="background-color: #9DBC98">
+    <section class="d-flex justify-content-between  p-4 text-black">
+        <div class="me-5">
+            <span>Get connected with us on social networks:</span>
+        </div>
+        <div>
+            <a href="" class="text-black me-4">
+                <i class="bi bi-facebook"></i>
+            </a>
+            <a href="" class="text-black me-4">
+                <i class="bi bi-twitter"></i>
+            </a>
+            <a href="" class="text-black me-4">
+                <i class="bi bi-google"></i>
+            </a>
+            <a href="" class="text-black me-4">
+                <i class="bi bi-instagram"></i>
+            </a>
+            <a href="" class="text-black me-4">
+                <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="" class="text-black me-4">
+                <i class="bi bi-github"></i>
+            </a>
+        </div>
+    </section>
+
+    <section class="">
+        <div class="container text-center text-md-start mt-3">
+
+            <div class="row mt-3">
+
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+
+                    <h6 class="text-uppercase fw-bold">
+                        <a href="/"><img src="/img/Logo.avif" width="35px"></a>
+                     LUMINOVA</h6>
+                    <hr class="mb-2 mt-0 d-inline-block mx-auto" style="width: 120px; background-color: #7c4dff; height: 2px" />
+                    <p>
+                        Online shopping for men has revolutionized the way they approach fashion, 
+                        access to a diverse range of styles. 
+                        men can update their wardrobe with just a few clicks.
+                    </p>
+                </div>
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+
+                    <h6 class="text-uppercase fw-bold">Products</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                        style="width: 60px; background-color: #7c4dff; height: 2px" />
+                    <p>
+                        <a href="#!" class="text-dark">Shirts</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-dark">Pants</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-dark">T-Shirts</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-dark">Shorts</a>
+                    </p>
+                </div>
+
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+
+                    <h6 class="text-uppercase fw-bold">Useful links</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
+                    <p>
+                        <a href="#!" class="text-dark">Your Account</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-dark">Become an Affiliate</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-dark">Shipping Rates</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-dark">Help</a>
+                    </p>
+                </div>
+
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+
+                    <h6 class="text-uppercase fw-bold">Contact</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                        style="width: 60px; background-color: #7c4dff; height: 2px" />
+                    <p><i class="bi bi-house-door-fill ms-3"></i> Bangalore, BG 112, INDIA</p>
+                    <p><i class="bi bi-envelope-at-fill ms-3"></i> luminova@gmia.in</p>
+                    <p><i class="bi bi-telephone-fill ms-3"></i> + 91 234 567 89 11</p>
+                    <p><i class="bi bi-telephone-fill ms-3"></i> + 91 234 567 89 12</p>
+                </div>
+            
+            </div>
+           
+        </div>
+    </section>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>   
+<script src="/js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>  
+const imgInpCall = (imgIndex)=>{
+    const imgInp = document.getElementById(`img-upload-inp-${imgIndex}`)
+    imgInp.click()
+}
+const editImg = (imgIndex) => {
+    try {
+        const imgform = document.getElementById(`img-form-${imgIndex}`)
+        imgform.submit()      
+    } catch (error) {
+        console.error('Error editing image:', error)
+    }
+}
+
+const msg = document.getElementById('errMsg')
+function priceAndQuanty(){
+    const price = document.getElementById('pPrice').value
+    const quanty = document.getElementById('pQuanty').value
+    if(price.match(/^[0-9,]{1,4}$/)&&quanty.match(/^[0-9]{1,4}$/)){
+        return true
+    }else{
+        msg.innerHTML = "Enter proper value"
+        return false
+    }
+}
+const desc = ()=>{
+    const desc = document.getElementById('product-description').value.trim()
+    if(desc.match(/^[a-zA-Z0-9\s,.()'’-]{15,400}$/)){
+        return true
+    }else{
+        msg.innerHTML = "Enter description at least 15 charachers"
+        return false
+    }
+}
+const name = ()=>{
+    const pName = document.getElementById('pName').value.trim()
+    if(pName.match(/^(?=.*[a-zA-Z])[a-zA-Z- ]{3,50}$/)){
+        return true
+    }else{
+        msg.innerHTML = "Enter proper prouct name"
+        return false
+    }
+}
+const brand = ()=>{
+    const pBrand = document.getElementById('pBrand').value.trim()
+    if(pBrand.match(/^(?=.*[a-zA-Z])[a-zA-Z ]{3,20}$/)){
+        return true
+    }else{
+        msg.innerHTML = "Enter proper brand name"
+        return false
+    }
+}
+
+function validate(){
+    if(name()&&brand()&&priceAndQuanty()&&desc()){
+        return true
+    }else{
+        return false
+    }
+}
+
+</script>
+</body>
+</html>

@@ -32,7 +32,7 @@
                     <% if(typeof mes !== 'undefined'){ %>
                         <p class="text-center text-primary"><%= mes %></p>
                     <% } %> 
-                    <p class="text-center text-primary" id="errMsg"></p>
+                    <small class="text-center text-primary" id="errMsg"></small>
                     <form onsubmit="return validate()" method="post">
                         <input class="form-inp" type="text" id="userName" name="name" placeholder="Enter your name" required>
                         <br>
@@ -164,7 +164,7 @@ function showPass (){
 const msg = document.getElementById('errMsg')
 function mobileNo(){
     const num = document.getElementById('mno').value
-    if(num.match(/^[0-9]{10,10}$/)){
+    if(num.match(/^(?!0{5})[0-9]{10}$/)){
         return true
     }else{
         msg.innerHTML = "Enter 10 digits as a mobile number"
@@ -175,10 +175,10 @@ function mobileNo(){
 
 function email(){
     const mail = document.getElementById('newEmail').value.trim()
-    if (mail.match(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)) {
+    if (mail.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$/)) {
         return true;
     }else{
-        msg.innerHTML = "Enter at least 4 characters with gmail.com"
+        msg.innerHTML = "Enter proper Email"
         return false
     }
 }
@@ -193,7 +193,7 @@ const pswrd = ()=>{
         }
         
     }else{
-        msg.innerHTML = "Enter strong password at least 8 characters"
+        msg.innerHTML = "Password at least 8 characters contain a mix of letters, numbers, and special characters"
         return false
     }
 }

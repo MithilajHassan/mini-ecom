@@ -150,23 +150,19 @@
 <script src="/js/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-// let timefield = document.getElementById("count");
 let btn = document.getElementById("resendBtn");
 
-let count = 40;     
-let timer = null; 
+let count = 59 
 
-(function countDown(){
-  
-//   timefield.textContent = `0:${count}`
-  
+function countDown(){  
   if(count !== 0){
-    timer = setTimeout(countDown, 1000)
+    setTimeout(countDown, 1000)
     count--; 
   } else {
     btn.removeAttribute("disabled")
   }
-}())
+}
+countDown()
 
 </script>
 </body>

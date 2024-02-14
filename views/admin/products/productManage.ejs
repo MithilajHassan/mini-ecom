@@ -17,7 +17,7 @@
         <a class="text-black text-decoration-none" href="/admin/adminLogout"><button class="admn-btn w-100 text-start "><i class="bi bi-box-arrow-right ms-3"></i> Logout</button></a>
     </div>
 </aside>
-<div class="mt-4 p-2 w-75">
+<div class="mt-4 p-2 w-75 vh-75">
     <a href="/admin/addProduct"><button type="button" class="btn text-black fw-bold" style="background-color: #58d645;"><i class="fa-solid fa-plus"></i> Add Products</button></a>
     <div class="d-flex align-items-center ps-3  mt-2">
         <div class="table-responsive">
@@ -27,7 +27,7 @@
             </tr>
             <tr>
                 <th>Name</th>
-                <th>Brnad</th>
+                <th>Brand</th>
                 <th>Category</th>
                 <th>Price</th>
                 <th>Quantity</th>                
@@ -44,7 +44,15 @@
                             <%= item.brand %>
                         </td>
                         <td>
-                            <%= item.category %>
+                            <% if(typeof category !== "undefined"){ %>
+                            <% category.forEach( value =>{ %>
+                                <% if (String(value._id) === String(item.category)) { %>
+                                    <%= value.name %>
+                                <% } %>
+                            <% }) %>
+                            <% } else { %>
+                                No categories available
+                            <% } %>
                         </td>
                         <td>
                             ₹<%= item.price %>
@@ -61,17 +69,11 @@
                         <td>
                             <div class="d-flex">
                             <a href="/admin/editProduct?id=<%= item._id %>"><button type="submit" class="btn btn-primary me-1"><i class="fa-solid fa-pen"></i></button></a>
-                            <% if(item.is_there === true){ %>
-                                <form action="/admin/removeProduct" method="post">
+                            
+                                <form action="/admin/removeProduct" onsubmit="return confirm('Do you want delete ?')" method="post">
                                     <input type="hidden" name="id" value="<%= item._id %>">   
                                     <button type="submit" class="btn" style="background-color: #ff3030;"><i class="fa-solid fa-trash-can"></i></button>                                                                       
                                 </form>
-                            <% }else{ %>  
-                                <form action="/admin/recoverProduct" method="post">
-                                    <input type="hidden" name="id" value="<%= item._id %>">                                       
-                                    <button type="submit" class="btn" style="background-color: #ffff00;"><i class="fa-solid fa-arrow-rotate-left"></i></button>
-                                </form>
-                            <% } %>
                             </div>
                         </td>
                     </tr>

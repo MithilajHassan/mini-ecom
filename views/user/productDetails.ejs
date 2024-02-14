@@ -23,11 +23,21 @@
                 <h4 class="ms-3 fw-bold text-success">₹<%= product.price %></h4>
                 <p class="ms-3 text-black"><%= product.description %></p>
             </div>
-                
+            <% if(product.quantity == 0){ %>
+                <p class="ms-3 text-danger fw-bold">Currently unavailable</p>
+            <% }else{ %>
             <div class="mt-5">
-                <button class="btn fw-bold" style="background-color: #ff9f00;">ADD TO CART</button>
+                <% if(typeof isInCart !=='undefined'){ %>
+                    <a href="/cart"><button class="btn fw-bold" style="background-color: #ff9f00;">GO TO CART</button></a>
+                <% }else{ %>
+                    <form action="/cart" method="post" class="d-inline-flex me-2">
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <button type="submit" class="btn fw-bold" style="background-color: #ff9f00;">ADD TO CART</button>
+                    </form>                  
+                <% } %>
                 <button class="btn fw-bold" style="background-color: #fb641b;">ADD TO WISHLIST</button>
             </div>
+            <% } %>
         </div>      
      </div>
 </div>

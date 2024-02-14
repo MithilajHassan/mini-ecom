@@ -16,7 +16,7 @@ export const upload = multer({
     storage:storage,
     fileFilter:(req,file,cb)=>{
         if (!file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) {
-            return cb(new Error('Only images are allowed!'));
+            return cb(new Error('Only images are allowed!'))
         }
         cb(null, true);
     },limits:{
@@ -244,7 +244,7 @@ export const getEditCategory = async(req,res)=>{
 }
 export const editCategory = async(req,res)=>{
     try {       
-        const {name,id} = req.body
+        const {name,currentName,id} = req.body
 
         const existing = await Category.findOne({name})
         if(!name.match(/^[a-zA-Z]{3,12}$/)){
@@ -269,7 +269,19 @@ export const editCategory = async(req,res)=>{
                 currentPage: page,
                 search: search || ''
             })
-        }else if(existing){
+        }else if(existing && existing.name != currentName){
+            const ctgryId = await Category.findOne({_id:id})
+            let search = req.query.search ? req.query.search : ''      
+            let page = req.query.page ?  parseInt(req.query.page) : 1
+            const limit = 2
+            const categoryData = await Category.find({
+                name:{$regex:`.*${search}.*`,$options:'i'}
+            })
+            .limit(limit)
+            .skip( (page-1) * limit)
+            const categoryCount = await Category.find({
+                name:{$regex:`.*${search}.*`,$options:'i'}
+            }).countDocuments()
             res.status(200).render('editCategory',{
                 mes:"Category is already exist",
                 ctgryId,

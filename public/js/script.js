@@ -25,6 +25,17 @@ function showPass (){
     passwordInput.getAttribute('type') === 'password' ? passwordInput.setAttribute('type','text') : passwordInput.setAttribute('type','password')
 }
 
+const menuDiv = document.getElementById('menu-div')
+const menubarShow = ()=>{
+    if (menuDiv.style.display == 'none') {
+        menuDiv.style.display = 'block'
+    } else {
+        menuDiv.style.display = 'none'
+        menuDiv.style.position = 'absolute'
+    }
+}
+
+
 // document.addEventListener("DOMContentLoaded", function () {
 //     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 //     checkboxes.forEach(checkbox => {

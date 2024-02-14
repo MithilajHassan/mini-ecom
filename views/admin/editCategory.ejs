@@ -42,6 +42,7 @@
                     <label for="name" class="form-label mt-1 me-2">Name:</label>
                     <input type="text" class="form-control" name="name" placeholder="Enter the name" value="<%= ctgryId.name %>" autofocus>
                   </div>
+                  <input type="hidden" name="currentName" value="<%= ctgryId.name %>">
                   <input type="hidden" name="id" value="<%= ctgryId._id %>">
                   <div class="d-flex justify-content-center">
                     <button type="submit" class="btn fw-bold w-25" style="background-color: #58d645;">EDIT</button>

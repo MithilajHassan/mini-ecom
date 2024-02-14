@@ -20,7 +20,7 @@
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Sort By
           </button>
-          <div class="dropdown-menu bg-secondary text-white" aria-labelledby="dropdownMenuButton" style="border-radius: 0; box-shadow: none;">
+          <div class="dropdown-menu text-white" aria-labelledby="dropdownMenuButton" style="border-radius: 0; box-shadow: none;">
             <a class="dropdown-item" href="/?sort=date">Newest First</a>
             <a class="dropdown-item" href="/?sort=lowToHigh">Price -- Low to High</a>
             <a class="dropdown-item" href="/?sort=highToLow">Price -- High to Low</a>
@@ -39,6 +39,9 @@
               <a href="/product/<%= value._id %>" class="text-decoration-none">
                 <img src="<%= value.images[0].path.replace('public', '') %>" class="card-img-top">
                 <div class="card-body px-0 pt-1">
+                  <% if(value.quantity == 0){ %>
+                  <p class="m-0 text-danger">Currently unavailable</p>
+                  <% } %>
                   <p class="m-0" style="color: #9b9a9a;"><b><%= value.brand %></b></p>
                   <p class="m-0 text-nowrap overflow-hidden text-black"><b><%= value.name %></b></p>
                   <p class="m-0 fw-bold text-success">₹<%= value.price %></p>

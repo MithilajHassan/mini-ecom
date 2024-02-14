@@ -83,6 +83,7 @@ body {
     width: 18rem;
     height: 85vh;
     border-right: 1px solid #b9b9b9;
+    border-bottom: 1px solid #b9b9b9;
     position: relative;
 }
 .adm-lgout{

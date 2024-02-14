@@ -1,0 +1,204 @@
+<%- include('../layouts/header') -%>
+
+    <% if(typeof cart !== 'undefined' && cart.length > 0){ %>
+
+        <div class="container vh-100">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4>Products</h4>
+                        <div class="list-group">
+                            <% for(const item of cart){ %>
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <a href="/product/<%= item.product._id %>"><img src="\productImgs\<%= item.product.images[0].filename %>" class="product-image me-3"></a>
+                                        <div>
+                                            <h5 class="mb-1"><%= item.product.name %></h5>
+                                            <b><p class="mb-1" style="color: #9b9a9a;"><%= item.product.brand %></p></b>
+                                            <b><p class="mb-1">Price: ₹<%= item.product.price %></p></b>
+                                            <div class="d-flex align-items-center">
+                                                <label for="quantity_<%= item.product._id %>" class="me-2">Quantity:</label>
+                                                <input type="number" id="quantity_<%= item.product._id %>" name="quantity" value="<%= item.quantity %>" style="width: 40px;" min="1" max="<%= item.product.quantity %>" readonly>
+                                                    <button onclick="decreaseQuantity('<%= item.product._id %>')" class="btn btn-sm btn-primary ms-2">-</button>
+                                                    <button onclick="increaseQuantity('<%= item.product._id %>','<%= item.product.quantity %>')" type="submit" class="btn btn-sm btn-primary ms-1">+</button>
+                                                <form action="/removeCartProduct" onsubmit="return confirm('Are you sure you want to remove this item ?')" method="post">
+                                                    <input type="hidden" name="cartQty" value="<%= item.quantity %>">
+                                                    <input type="hidden" name="productId" value="<%= item.product._id %>">
+                                                    <button class="btn btn-danger ms-4" type="submit"><i class="fa-solid fa-trash-can"></i></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                            <div class="list-group-item sticky-bottom text-end shadow mb-2"><button class="btn btn-lg fw-bold" style="background-color: #fb641b;">Place Order</button></div>
+                        </div>
+                </div>
+                <div class="col-md-4">
+                    <h4 class="mb-3">Price Details</h4>
+                    <div class="rounded p-2 bg-white">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td>Price (<%= cart.length %> Items)</td>
+                                <td>₹<%= totalPrice%></td>
+                            </tr>
+                            <tr>
+                                <td>Delivery Charges</td>
+                                <td>₹40 (Free)</td>
+                            </tr>
+                            <tr class="table-secondary">
+                                <td><strong>Total Amount</strong></td>
+                                <td><strong style="color: green;">₹<%= totalPrice %></strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+
+    <% }else{ %>
+        <div class="container d-flex justify-content-center align-items-center vh-100">
+            <div>
+                <h5 class="text-center text-black">Your cart is empty!</h5>
+                <P class="text-center text-dark">Add items to it now.</p>
+                <div class="d-flex justify-content-center">
+                    <a href="/" class="btn btn-primary btn-lg">Shop Now</a>
+                </div>
+            </div>
+        </div>   
+    <% } %>
+
+    <footer class="text-center text-lg-start text-dark" style="background-color: #9DBC98">
+        <section class="d-flex justify-content-between  p-4 text-black">
+            <div class="me-5">
+                <span>Get connected with us on social networks:</span>
+            </div>
+            <div>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-twitter"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-google"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-linkedin"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-github"></i>
+                </a>
+            </div>
+        </section>
+    
+        <section class="">
+            <div class="container text-center text-md-start mt-3">
+    
+                <div class="row mt-3">
+    
+                    <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">
+                            <a href="/"><img src="/img/Logo.avif" width="35px"></a>
+                         LUMINOVA</h6>
+                        <hr class="mb-2 mt-0 d-inline-block mx-auto" style="width: 120px; background-color: #7c4dff; height: 2px" />
+                        <p>
+                            Online shopping for men has revolutionized the way they approach fashion, 
+                            access to a diverse range of styles. 
+                            men can update their wardrobe with just a few clicks.
+                        </p>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">Products</h6>
+                        <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                            style="width: 60px; background-color: #7c4dff; height: 2px" />
+                        <p>
+                            <a href="#!" class="text-dark">Shirts</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Pants</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">T-Shirts</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Shorts</a>
+                        </p>
+                    </div>
+    
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">Useful links</h6>
+                        <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
+                        <p>
+                            <a href="#!" class="text-dark">Your Account</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Become an Affiliate</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Shipping Rates</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Help</a>
+                        </p>
+                    </div>
+    
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">Contact</h6>
+                        <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                            style="width: 60px; background-color: #7c4dff; height: 2px" />
+                        <p><i class="bi bi-house-door-fill ms-3"></i> Bangalore, BG 112, INDIA</p>
+                        <p><i class="bi bi-envelope-at-fill ms-3"></i> luminova@gmia.in</p>
+                        <p><i class="bi bi-telephone-fill ms-3"></i> + 91 234 567 89 11</p>
+                        <p><i class="bi bi-telephone-fill ms-3"></i> + 91 234 567 89 12</p>
+                    </div>
+                
+                </div>
+               
+            </div>
+        </section>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>   
+    <script src="/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+    const decreaseQuantity = async(productId)=> {
+        const quantityInput = document.getElementById(`quantity_${productId}`)
+        if (quantityInput.value > 1) {
+            const response = await axios.post('/cartQMinus',{productId})
+            if (response.data.success) {
+                window.location.reload()
+                    // quantityInput.value = parseInt(quantityInput.value, 10) - 1
+                }
+        }
+    }
+    const increaseQuantity = async(productId,quantity)=> {
+        const quantityInput = document.getElementById(`quantity_${productId}`)
+        console.log(quantityInput.value , quantity)       
+        if(parseInt(quantity, 10) > 0){
+            if (quantityInput.value < 10 ) {
+                const response = await axios.post('/cartQPlus',{productId})
+                if (response.data.success) {
+                    window.location.reload()
+                    // quantityInput.value = parseInt(quantityInput.value, 10) + 1
+                }
+            } else {
+                alert("We're sorry! Only 10 unit(s) allowed in each order")
+            }
+        }else{
+           alert("We're sorry! Stock is over")
+        }
+    }
+    </script>
+    </body>
+    </html>

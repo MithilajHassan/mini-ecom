@@ -65,17 +65,10 @@
                         <th scope="row"><%= i+1 %></th>
                         <td><%= value.name %></td><%=  %>
                         <td>
-                            <% if(value.status === true){ %>
-                                <form action="/admin/removeCategory" method="post">
-                                    <input type="hidden" name="id" value="<%= value._id %>">   
-                                    <button type="submit" class="btn text-black fw-bold" style="background-color: #58d645;">True</button>                                                                       
-                                </form>
-                            <% }else{ %>  
-                                <form action="/admin/recoverCategory" method="post">
-                                    <input type="hidden" name="id" value="<%= value._id %>">                                       
-                                    <button type="submit" class="btn text-black fw-bold" style="background-color: #ffff00;">False</button>
-                                </form>
-                            <% } %>
+                           <form action="/admin/removeCategory" onsubmit="return confirm('Do you want unlist ?')" method="post">
+                              <input type="hidden" name="id" value="<%= value._id %>">   
+                              <button type="submit" class="btn text-black fw-bold" style="background-color: #58d645;">True</button>                                                                       
+                            </form>
                             </div>
                         </td>
                         <td><a href="/admin/editCategory?id=<%= value._id %>"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-pen"></i></button></a></td>

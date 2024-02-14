@@ -1,0 +1,85 @@
+<%- include('../layouts/header') -%>
+
+<div class="container-fluid d-flex"> 
+  <!-- Sidebar -->
+  <aside class="aside-bar px-0" id="aside-menu">
+      <button class="side-menu-btn border-0 m-1" id="menu-btn" onclick="menubarShow()"><i class="fa-solid fa-bars"></i></button>
+      <div class="menu-cotnt  px-2 py-2 border rounded z-1 bg-light" id="menu-div">
+          <div class="bg-white  border-bottom shadow-sm d-flex p-3 mb-3" style="height: 73px;">
+                  <img src="/img/default.jpg" class="rounded-circle me-3" width="45vw"  alt="">
+                  <small>Hello,<br><span class="fw-bold "><%= user.name %></span></small>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="side-menu nav-item border-bottom shadow-sm" style="background-color: #7ed371;">
+                        <a class="nav-link active pt-3" aria-current="page" href="/profile">
+                          <i class="bi bi-person-square me-2"></i>
+                            My Profil
+                        </a>
+                    </li>
+                    <li class="side-menu nav-item bg-white border-bottom shadow-sm" >
+                      <a class="nav-link pt-3" aria-current="page" href="#">
+                        <i class="bi bi-box-fill me-2"></i>
+                        My Orders
+                      </a>
+                  </li>
+                  <li class="side-menu nav-item bg-white border-bottom shadow-sm" >
+                    <a class="nav-link pt-3" aria-current="page" href="/userAddress">
+                      <i class="fa-solid fa-address-card me-2"></i>
+                       Address Management
+                    </a>
+                </li>
+                <li class="side-menu nav-item bg-white border-bottom shadow-sm" >
+                  <a class="nav-link pt-3" aria-current="page" href="#">
+                    <i class="bi bi-heart-fill me-2"></i>
+                      Wishlist
+                  </a>
+                </li>
+                <li class="side-menu nav-item bg-white border-bottom shadow-sm" >
+                  <a class="nav-link pt-3" aria-current="page" href="#">
+                    <i class="fa-solid fa-ticket me-2"></i>
+                      Coupons
+                  </a>
+                </li>
+                <li class="side-menu nav-item bg-white border-bottom shadow-sm" >
+                  <a class="nav-link pt-3" aria-current="page" href="#">
+                    <i class="fa-solid fa-ticket me-2"></i>
+                      Wallet
+                  </a>
+                </li>
+                </ul>
+            </div>
+        </aside>
+        <!-- Main Content -->      
+        <div class="container mb-3 z-0">
+          <div class="card">
+            <div class="card-header">
+              <h5>Personal Details</h5>
+            </div>
+            <div class="card-body">
+              <!-- <div class="form-group mb-2">
+                <label for="name">Profile picture:</label>
+                  <input type="image" class="form-control shadow-none" id="profilePic" src="/img/default.jpg" style="width: 10vw;">               
+              </div> -->
+              <div class="form-group mb-2">
+                <label for="name">Name:</label>
+                  <input type="text" class="form-control shadow-none" id="name" value="<%= user.name %>" readonly>               
+              </div>
+              <div class="form-group mb-2">
+                <label for="email">Email:</label>
+                  <input type="text" class="form-control shadow-none" id="email" value="<%= user.email %>" readonly>               
+              </div>
+              <div class="form-group mb-2">
+                <label for="email">Phone:</label>
+                  <input type="number" class="form-control shadow-none" id="mno" value="<%= user.mobile_number %>" readonly>               
+              </div>
+              <a href="/editProfile" class="btn text-black mb-3 ms-3" style="background-color:#58d645;">Edit</a>
+              <div class="form-group mb-2">
+                <label for="password">Password:</label>
+                  <input type="password" class="form-control shadow-none" id="Password" value=".........." readonly>               
+              </div>
+              <a href="/changePassword" class="btn text-black mb-3 ms-3" style="background-color:#58d645;">Change Password</a>
+            </div>
+          </div>
+        </div>  
+      </div>  
+<%- include('../layouts/footer') -%>

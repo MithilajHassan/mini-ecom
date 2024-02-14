@@ -46,7 +46,7 @@
                             <li class="m-2"><a class="drop-item text-primary " href="/signup">Signup</a></li>
                             <hr class="m-0">
                         <% }%>                                        
-                        <li class="m-2"><a class="drop-item" href="#"><i class="bi bi-person-square me-2"></i>Profile</a></li>
+                        <li class="m-2"><a class="drop-item" href="/profile"><i class="bi bi-person-square me-2"></i>Profile</a></li>
                         <hr class="m-0">
                         <li class="m-2"><a class="drop-item" href="#"><i class="bi bi-heart-fill me-2"></i>Wishlist</a></li>
                         <hr class="m-0">
@@ -59,7 +59,7 @@
                     </ul>
                 </li>
                 <li class="nav-hov nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-cart-fill me-1"></i>Cart</a>
+                    <a class="nav-link" href="/cart"><i class="bi bi-cart-fill me-1"></i>Cart</a>
                 </li>
                 <li class="nav-hov nav-item">
                     <a class="nav-link" href="#">About us</a>
@@ -73,7 +73,7 @@
 <div class="sub-nav bg-white z-1 fixed-top py-2 border-bottom">
     <div class="container d-flex justify-content-center">
         <% category.forEach((value)=>{ %>
-            <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href=""><%= value.name %></a>
+            <a class="nav2-hov text-dark fw-bold text-decoration-none text-center mx-4" href="/?category=<%= value._id %>"><%= value.name %></a>
         <% }) %> 
     </div>   
 </div>

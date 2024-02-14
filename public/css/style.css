@@ -87,3 +87,48 @@ body{
     border: none;
     background: none;
 }
+.side-menu{
+    height: 55px;
+}
+.side-menu:hover {
+    background-color: #ddfdda !important;
+}
+.side-menu-btn{
+    display: none;
+    width: 40px;
+    height: 30px;
+    background-color: #d9d8d8;
+}
+.aside-bar{
+    width: 22rem;
+    height: fit-content;
+}
+.menu-cotnt{
+    display: block;
+}
+.product-image {
+    max-width: 115px;
+    max-height: 115px;
+}
+
+
+
+
+
+
+
+@media (max-width: 800px){
+    .side-menu-btn{
+        display: block;
+        width: 40px;
+        height: 30px;
+        background-color: #d9d8d8;
+    }
+    .menu-cotnt{
+        display: none;
+    }
+    .aside-bar{
+        width: fit-content;
+    }
+    
+}

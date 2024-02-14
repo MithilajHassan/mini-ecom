@@ -2,7 +2,7 @@ import express from "express"
 import { addCategory, adminGetLogin, adminLogout, blockUser, editCategory, getCategoryMng, getDashboard, getEditCategory, getUsers,
         recoverCategory, removeCategory, unBlockUser, upload, verifyAdmin } from "../controllers/adminController.js"
 import { isAdmin, isAdminLogged } from "../middlewares/adminAuth.js"
-import { editProduct, getAddProduct, getEditProduct, getProductMng, productAdding, recoverProduct, removeProduct } from "../controllers/productController.js"
+import { editImage, editProduct, getAddProduct, getEditProduct, getProductMng, productAdding, removeProduct } from "../controllers/productController.js"
 const admin_route = express.Router()
 
 
@@ -19,7 +19,7 @@ admin_route.post('/addProduct', isAdmin, upload.array('images',3), productAdding
 admin_route.get('/editProduct',isAdmin,getEditProduct)
 admin_route.post('/editProduct',isAdmin,editProduct)
 admin_route.post('/removeProduct',isAdmin,removeProduct)
-admin_route.post('/recoverProduct',isAdmin,recoverProduct)
+admin_route.post('/editImage',isAdmin,upload.single('image'),editImage)
 
 //--------Customers---------------//
 admin_route.get('/users', isAdmin,getUsers)

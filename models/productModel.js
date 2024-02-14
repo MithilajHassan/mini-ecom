@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 const productSchema = new Schema({
     name:{
@@ -8,7 +8,7 @@ const productSchema = new Schema({
         type:String,
         required:true
     },category:{
-        type:String,
+        type:Schema.ObjectId,
         required:true
     },description:{
         type:String,
