@@ -152,12 +152,13 @@
 <script>
 let btn = document.getElementById("resendBtn");
 
-let count = 59 
-
-function countDown(){  
-  if(count !== 0){
+let count = 60     
+let timer = document.getElementById('count')
+function countDown() {
+  if (count !== 0) {
+    count--
+    timer.innerHTML = `00:${count}`
     setTimeout(countDown, 1000)
-    count--; 
   } else {
     btn.removeAttribute("disabled")
   }

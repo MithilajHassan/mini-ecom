@@ -18,8 +18,9 @@ export const getCart = async(req,res)=>{
                 })
                 totalPrice += parseInt(product.price * item.quantity)
             }
-        }      
-        res.status(200).render('cart',{user:userData,cart:products,totalPrice})   
+        }
+        const url = `/checkout?cart=${encodeURIComponent(JSON.stringify(products))}&amount=${totalPrice}`      
+        res.status(200).render('cart',{user:userData,cart:products,totalPrice,url})   
     } catch (err) {
         console.log(err)
     }

@@ -3,6 +3,7 @@ import { addCategory, adminGetLogin, adminLogout, blockUser, editCategory, getCa
         recoverCategory, removeCategory, unBlockUser, upload, verifyAdmin } from "../controllers/adminController.js"
 import { isAdmin, isAdminLogged } from "../middlewares/adminAuth.js"
 import { editImage, editProduct, getAddProduct, getEditProduct, getProductMng, productAdding, removeProduct } from "../controllers/productController.js"
+import { allOrders } from "../controllers/orderController.js"
 const admin_route = express.Router()
 
 
@@ -33,6 +34,9 @@ admin_route.get('/editCategory',isAdmin,getEditCategory)
 admin_route.post('/editCategory',isAdmin,editCategory)
 admin_route.post('/removeCategory',isAdmin,removeCategory)
 admin_route.post('/recoverCategory',isAdmin,recoverCategory)
+
+//--------Orders---------------//
+admin_route.get('/allOrders',isAdmin,allOrders)
 
 //-------------Logout------------//
 admin_route.get('/adminLogout', isAdmin, adminLogout)

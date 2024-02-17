@@ -5,7 +5,6 @@ import Category from '../models/categoryModel.js'
 import Otp from '../models/otpModel.js'
 import bcrypt from 'bcrypt'
 import Cart from '../models/cartModel.js'
-import mongoose from 'mongoose'
 
 // ----------Password bcrypting-----------//
 const securePassword = async (password) => {

@@ -39,7 +39,7 @@
                     <button type="submit"  class="log-btn w-100 mt-3 ">Verify</button>
                 </form> 
                 <div class="d-flex align-items-center justify-content-between">
-                    
+                    <p id="count"></p>
                     <a href="/resend"><button class="resend-btn me-2" id="resendBtn" disabled >Resend</button></a>  
                 </div>
             </div>
@@ -153,14 +153,15 @@
 
 let btn = document.getElementById("resendBtn")
 
-let count = 59     
-
+let count = 60     
+let timer = document.getElementById('count')
 function countDown() {
   if (count !== 0) {
     count--
-    setTimeout(countDown, 1000);
+    timer.innerHTML = `00:${count}`
+    setTimeout(countDown, 1000)
   } else {
-    btn.removeAttribute("disabled");
+    btn.removeAttribute("disabled")
   }
 }
 countDown(count)

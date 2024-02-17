@@ -1,0 +1,168 @@
+<%- include('../layouts/header') -%>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mb-2">
+            <h4>Products</h4>
+            <div class="list-group">
+                <div class="list-group-item d-flex flex-grow-1">
+                    <% for(let item of products){ %>
+                        <img src="\productImgs\<%= item.product.images[0].filename %>" class="img-fluid me-3" style="max-width: 80px;">
+                    <% } %>                                                                               
+                    <p class="text-success fw-bold ms-auto">Arrive by Mon, Jan 2022</p>                    
+                </div>
+                
+                <div class="list-group-item mt-2">                                                          
+                    <h5>Delivery Address</h5> 
+                    <% if(typeof address !== 'undefined'){ %>
+                    <p class="my-0"><span class="fw-bold"><%= address[0].name %> , </span><%= address[0].address %></p>
+                    <p class="my-0"><%= address[0].district %> , <%= address[0].state %></p>
+                    <p class="my-0"><%= address[0].pincode %></p>
+                    <p class="my-0">Mobile : <%= address[0].mno %></p>
+                    <% } %>
+                </div>
+                <div class="list-group-item mt-2">                                                          
+                    <h5>Payment Method</h5> 
+                    <form action="/checkout" method="post">
+                        <p>Please select any payment method:</p>
+                        <input type="radio" name="payment" id="credit" value="credit card" required>
+                        <label for="credit">Credit card</label><br>
+                        <input type="radio" name="payment" id="upi" value="upi">
+                        <label for="upi">UPI</label><br>
+                        <input type="radio" name="payment" id="cash on delivery" value="cash on delivery">
+                        <label for="">Cash on delivery</label><br>
+                        <input type="hidden" name="userId" id="" value="<%= user._id %>">
+                        <input type="hidden" name="totalAmount" id="" value="<%= totalAmount %>">
+                        <input type="hidden" name="addressId" id="" value=" <%= address[0]._id %>">
+                        <input type="hidden" name="products" id="" value=" <%= cartP %>">
+                        <div class="text-end "><button class="btn btn-lg mt-3 fw-bold" type="submit" style="background-color: #fb641b;">Place Order</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h4 class="mb-3">Price Details</h4>
+            <div class="rounded p-2 bg-white">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td>Price (<%= products.length %> Items)</td>
+                            <td>₹<%= totalAmount %></td>
+                        </tr>
+                        <tr>
+                            <td>Delivery Charges</td>
+                            <td>₹40 (Free)</td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td><strong>Total Amount</strong></td>
+                            <td><strong style="color: green;">₹<%= totalAmount %></strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <footer class="text-center text-lg-start text-dark" style="background-color: #9DBC98">
+        <section class="d-flex justify-content-between  p-4 text-black">
+            <div class="me-5">
+                <span>Get connected with us on social networks:</span>
+            </div>
+            <div>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-twitter"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-google"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-linkedin"></i>
+                </a>
+                <a href="" class="text-black me-4">
+                    <i class="bi bi-github"></i>
+                </a>
+            </div>
+        </section>
+    
+        <section class="">
+            <div class="container text-center text-md-start mt-3">
+    
+                <div class="row mt-3">
+    
+                    <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">
+                            <a href="/"><img src="/img/Logo.avif" width="35px"></a>
+                         LUMINOVA</h6>
+                        <hr class="mb-2 mt-0 d-inline-block mx-auto" style="width: 120px; background-color: #7c4dff; height: 2px" />
+                        <p>
+                            Online shopping for men has revolutionized the way they approach fashion, 
+                            access to a diverse range of styles. 
+                            men can update their wardrobe with just a few clicks.
+                        </p>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">Products</h6>
+                        <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                            style="width: 60px; background-color: #7c4dff; height: 2px" />
+                        <p>
+                            <a href="#!" class="text-dark">Shirts</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Pants</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">T-Shirts</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Shorts</a>
+                        </p>
+                    </div>
+    
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">Useful links</h6>
+                        <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #7c4dff; height: 2px" />
+                        <p>
+                            <a href="#!" class="text-dark">Your Account</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Become an Affiliate</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Shipping Rates</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-dark">Help</a>
+                        </p>
+                    </div>
+    
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+    
+                        <h6 class="text-uppercase fw-bold">Contact</h6>
+                        <hr class="mb-4 mt-0 d-inline-block mx-auto"
+                            style="width: 60px; background-color: #7c4dff; height: 2px" />
+                        <p><i class="bi bi-house-door-fill ms-3"></i> Bangalore, BG 112, INDIA</p>
+                        <p><i class="bi bi-envelope-at-fill ms-3"></i> luminova@gmia.in</p>
+                        <p><i class="bi bi-telephone-fill ms-3"></i> + 91 234 567 89 11</p>
+                        <p><i class="bi bi-telephone-fill ms-3"></i> + 91 234 567 89 12</p>
+                    </div>
+                
+                </div>
+               
+            </div>
+        </section>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>   
+    <script src="/js/script.js"></script>
+    </body>
+    </html>    

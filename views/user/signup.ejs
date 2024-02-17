@@ -175,7 +175,7 @@ function mobileNo(){
 
 function email(){
     const mail = document.getElementById('newEmail').value.trim()
-    if (mail.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$/)) {
+    if (mail.match(/^[a-zA-Z0-9._%+-]{3,}@[a-zA-Z0-9.]{3,}\.[a-zA-Z]{2,}$/)) {
         return true;
     }else{
         msg.innerHTML = "Enter proper Email"

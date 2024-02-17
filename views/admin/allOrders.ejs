@@ -1,0 +1,63 @@
+<%- include('../layouts/adminHeader') -%>
+
+    <section class="container-fluid p-0 d-flex ">
+        <aside class="side-bar mt-4 me-2" id="aside-menu">
+            <button class="side-menu bitem-0 m-1" id="menu-btn" onclick="asideShow()"><span
+                    class="material-symbols-outlined">menu</span></button>
+            <div class="menu-values m-1 pt-2" id="menu-page">
+                <a href="/admin/dashboard" class="text-black text-decoration-none"><button
+                        class="admn-btn mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i>
+                        Dashboard</button></a>
+                <a href="/admin/users" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-people-fill ms-3"></i> Customers</button></a>
+                <a href="/admin/productManage" class="text-black text-decoration-none"><button
+                        class="admn-btn mb-2 w-100 text-start "><i class="bi bi-archive-fill ms-3"></i>
+                        Products</button></a>
+                <a href="/admin/allOrders" class="text-black text-decoration-none"><button class="admn-btn-A mb-2 w-100 text-start "><i
+                            class="bi bi-file-earmark-fill ms-3"></i> Orders</button></a>
+                <a href="/admin/categoryManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
+                <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-card-image ms-3"></i> Banners</button></a>
+                <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-star-fill ms-3"></i> coupons</button></a>
+                <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-clipboard-data-fill ms-3"></i> Sales Report</button></a>
+            </div>
+            <div class="adm-lgout m-1" id="l-out-btn">
+                <a class="text-black text-decoration-none" href="/admin/adminLogout"><button
+                        class="admn-btn w-100 text-start "><i class="bi bi-box-arrow-right ms-3"></i>
+                        Logout</button></a>
+            </div>
+        </aside>
+        <div class="px-3 w-75">
+            <div class="table-responsive mt-4">
+              <table class="table table-bordered table-success table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col">Order ID</th>                 
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% products.forEach((item,i) => { %>
+                    <tr>
+                      <td><%= i +1 %></td>
+                      <td>₹<%= item.price %></td> <td><%= item.payment %></td>
+                      <td class="<% if (item.status === 'Pending') { %>text-warning<% } else if (item.status === 'Cancelled') { %>text-danger<% } else if (item.status === 'Delivered') { %>text-success<% } %>">
+                        <b><%= item.status %></b></td>
+                      <td>
+                        <a href="/admin/item/<%=  %>" class="btn btn-primary">View</a>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+    </section>
+
+    <%- include('../layouts/footer') -%>

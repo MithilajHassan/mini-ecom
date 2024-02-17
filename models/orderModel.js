@@ -5,13 +5,32 @@ const orderSchema = new Schema({
         type:Schema.ObjectId,
         require:true
     },
-    totalAmout:{
+    products:[{
+        productId:{
+            type:String,
+            require:true
+        },quantity:{
+            type:Number,
+            require:true,
+        },status:{
+            type:String,
+            require:true,
+            default:'Pending'
+        }     
+    }],    
+    totalAmount:{
         type:Number,
         require:true
     },
     payment:{
+        type:String,
+        require:true
     },
-    createdAt: {
+    addressId:{
+        type:Schema.ObjectId,
+        require:true
+    },
+    createdAt:{
         type: Date,
         default: Date.now,
     }

@@ -1,0 +1,109 @@
+<%- include('../layouts/header') -%>
+
+<div class="container-fluid d-flex">
+  <!-- Sidebar -->
+  <aside class="aside-bar px-0" id="aside-menu">
+      <button class="side-menu-btn border-0 m-1" id="menu-btn" onclick="menubarShow()">
+          <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="menu-cotnt px-2 py-2 border rounded z-1 bg-light" id="menu-div">
+          <div class="bg-white border-bottom shadow-sm d-flex p-3 mb-3" style="height: 73px;">
+              <img src="/img/default.jpg" class="rounded-circle me-3" width="45vw" alt="">
+              <small>Hello,<br><span class="fw-bold "><%= user.name %></span></small>
+          </div>
+          <ul class="nav flex-column">
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link active pt-3" aria-current="page" href="/profile">
+                      <i class="bi bi-person-square me-2"></i>My Profile
+                  </a>
+              </li>
+              <li class="side-menu nav-item border-bottom shadow-sm" style="background-color: #7ed371;">
+                  <a class="nav-link pt-3" aria-current="page" href="/myOrders">
+                      <i class="bi bi-box-fill me-2"></i>My Orders
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="/userAddress">
+                      <i class="fa-solid fa-address-card me-2"></i>Address Management
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="#">
+                      <i class="bi bi-heart-fill me-2"></i>Wishlist
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="#">
+                      <i class="fa-solid fa-ticket me-2"></i>Coupons
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="#">
+                      <i class="fa-solid fa-ticket me-2"></i>Wallet
+                  </a>
+              </li>
+          </ul>
+      </div>
+  </aside>
+  <!-- Main Content -->
+  <div class="container mb-3 ps-0 z-0">
+      <div class="bg-white p-3 m-2">
+          <h5 class="mx-4 mt-2">My Orders</h5>
+          <div class="list-group">
+              <% if (typeof orders !=='undefined' && orders.length> 0) { %>
+                  <% orders.forEach((item, index)=> { %>
+                      <div class="list-group-item">
+                          <div class="d-flex">
+                              <a href="/product/<%= item.product._id %>">
+                                  <img src="/productImgs/<%= item.product.images[0].filename %>" class="product-image me-3">
+                              </a>
+                              <div>
+                                  <h5 class="mb-1 overflow-hidden "><%= item.product.name %></h5>
+                                  <b><p class="mb-1">Price: ₹<%= item.price %></p></b>
+                                  <% if (item.status === 'Pending') { %>
+                                    <b><p class="mb-1">Status: <span class="text-warning" id="status-<%= item.product._id %>"><%= item.status %></span></p></b>
+                                <% } else if (item.status === 'Cancelled') { %>
+                                    <b><p class="mb-1">Status: <span class="text-danger" id="status-<%= item.product._id %>"><%= item.status %></span></p></b>
+                                <% } else if (item.status === 'Delivered') { %>
+                                    <b><p class="mb-1">Status: <span class="text-success" id="status-<%= item.product._id %>"><%= item.status %></span></p></b>
+                                <% } else { %>
+                                    <b><p class="mb-1">Status: <span class="text"><%= item.status %></span></p></b>
+                                <% } %>
+                              </div>
+                          </div>
+                          <div class="text-end">
+                            <button  class="btn btn-danger" id="cancel-<%= item.product._id %>" onclick="cancelOrder('<%= item.product._id %>')">Cancel</button>
+                        </div>
+                      </div>
+                  <% }) %>
+              <% } else { %>
+                  <h5 class="text-center text-black">There are no orders</h5>
+              <% } %>
+          </div>
+      </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') -%>
+<script>
+    const cancelOrder = async (productId)=>{
+        try {
+            const response = await fetch("/cancelOrder/" + productId, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            })
+            if(response.status == 200){
+                const cancelBtn = document.getElementById(`cancel-${productId}`)
+                cancelBtn.remove()
+                const status = document.getElementById(`status-${productId}`)
+                status.innerHTML = 'Cancelled'
+            }else {
+                console.error("Failed to cancel the product.")
+            } 
+        } catch (err) {
+            console.error(err)
+        }    
+    }
+</script>

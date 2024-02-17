@@ -1,10 +1,11 @@
 import {EditUserProfie, EditingUserProfie, changePass, checkOtpForForgot, forgotpass, getForgotpass, getHome, getLogin,
         getOtp, getOtpForForgot, getPasswordChange, loadSignup, passwordChanging, productDetails, resend, resendForgot, 
         signuping, userLogout,userProfie,verifyLogin, verifyOtp}  from '../controllers/userController.js'
-import express from 'express'
 import { isOtpSent, is_logged, is_logout } from '../middlewares/auth.js'
 import { addToCart, cartQuantiyMinus, cartQuantiyPlus, getCart, removeCartProduct } from '../controllers/cartController.js'
 import { addAddress, deleteAddress, editAddress, getAddAddress, getEditAddress, userAddress } from '../controllers/addressController.js'
+import { cancelOrder, getOrder, makeOrder, myOrders } from '../controllers/orderController.js'
+import express from 'express'
 
 const user_route = express.Router()
 
@@ -20,6 +21,12 @@ user_route.post('/cart',is_logout,addToCart)
 user_route.post('/removeCartProduct',is_logout,removeCartProduct)
 user_route.post('/cartQPlus',is_logout,cartQuantiyPlus)
 user_route.post('/cartQMinus',is_logout,cartQuantiyMinus)
+
+// ----------- user Order ------------//
+user_route.get('/checkout',is_logout,getOrder)
+user_route.post('/checkout',is_logout,makeOrder)
+user_route.get('/myOrders',is_logout,myOrders)
+user_route.post('/cancelOrder/:id',is_logout,cancelOrder)
 
 //------User profile-------//
 user_route.get('/profile',is_logout,userProfie)
