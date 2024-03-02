@@ -8,33 +8,33 @@
                     <% for(let item of products){ %>
                         <img src="\productImgs\<%= item.product.images[0].filename %>" class="img-fluid me-3" style="max-width: 80px;">
                     <% } %>                                                                               
-                    <p class="text-success fw-bold ms-auto">Arrive by Mon, Jan 2022</p>                    
+                    <p class="text-success fw-bold ms-auto"></p>                    
                 </div>
                 
                 <div class="list-group-item mt-2">                                                          
-                    <h5>Delivery Address</h5> 
+                    <h5>Delivery Address</h5>
+                    <form id="order-form" method="post"> 
                     <% if(typeof address !== 'undefined'){ %>
-                    <p class="my-0"><span class="fw-bold"><%= address[0].name %> , </span><%= address[0].address %></p>
-                    <p class="my-0"><%= address[0].district %> , <%= address[0].state %></p>
-                    <p class="my-0"><%= address[0].pincode %></p>
-                    <p class="my-0">Mobile : <%= address[0].mno %></p>
+                    <% address.forEach((add,i)=>{ %>  
+                    <input type="radio" name="addressId" id="address-<%= i %>" value="<%= add._id %>" required >
+                    <label for="credit"><span class="fw-bold"><%= add.name %> , </span><%= add.address %></label><br>
+                    <% }) %>
                     <% } %>
+                    
                 </div>
                 <div class="list-group-item mt-2">                                                          
                     <h5>Payment Method</h5> 
-                    <form action="/checkout" method="post">
+                    
                         <p>Please select any payment method:</p>
-                        <input type="radio" name="payment" id="credit" value="credit card" required>
-                        <label for="credit">Credit card</label><br>
+                        <input type="radio" name="payment" id="wallet" value="wallet" required>
+                        <label for="credit">Wallet</label><br>
                         <input type="radio" name="payment" id="upi" value="upi">
                         <label for="upi">UPI</label><br>
                         <input type="radio" name="payment" id="cash on delivery" value="cash on delivery">
                         <label for="">Cash on delivery</label><br>
                         <input type="hidden" name="userId" id="" value="<%= user._id %>">
                         <input type="hidden" name="totalAmount" id="" value="<%= totalAmount %>">
-                        <input type="hidden" name="addressId" id="" value=" <%= address[0]._id %>">
-                        <input type="hidden" name="products" id="" value=" <%= cartP %>">
-                        <div class="text-end "><button class="btn btn-lg mt-3 fw-bold" type="submit" style="background-color: #fb641b;">Place Order</button></div>
+                        <div class="text-end "><button class="btn btn-lg mt-3 fw-bold" id="order-place" type="submit" style="background-color: #fb641b;">Place Order</button></div>
                     </form>
                 </div>
             </div>
@@ -164,5 +164,43 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>   
     <script src="/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        const orderForm = document.getElementById('order-form')
+        orderForm.addEventListener('submit',async()=>{
+          try {
+            event.preventDefault()
+            const formData = new FormData(orderForm);
+            const formObject = {};
+            formData.forEach((value, i) => {
+                formObject[i] = value
+            })
+            const response = await axios.post('/checkout', formObject )
+            if(response.data.cashOnDelivery){
+                window.location = '/orderSuccessful'
+            }else if(response.data.upi){
+                const { orderId, totalAmount ,key_id } = response.data
+                const options = {
+                    key: key_id, 
+                    amount: parseInt(totalAmount)*100, 
+                    currency: 'INR',
+                    name: 'Luminova',
+                    description: 'Order Payment',
+                    image: "/img/Logo.avif",
+                    order_id: orderId,
+                    handler: function(response) {
+                        console.log('Payment success:', response)                       
+                        window.location.href = '/orderSuccessful'
+                    },                   
+                }
+                const raz = new Razorpay(options)
+                raz.open()
+            }               
+        } catch (error) {
+            console.error('Error:', error)
+        }
+        })
+    </script>
     </body>
     </html>    

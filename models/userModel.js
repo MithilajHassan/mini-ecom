@@ -18,6 +18,11 @@ const userSchema = new Schema({
         type:String,
         require:true
     },
+    balance:{
+        type:Number,
+        default:0,
+        require:true
+    },
     is_admin:{
         type:Boolean,
         require:true,

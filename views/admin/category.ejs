@@ -19,9 +19,9 @@
                             class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
                 <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
                             class="bi bi-card-image ms-3"></i> Banners</button></a>
-                <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                <a href="/admin/couponManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
                             class="bi bi-star-fill ms-3"></i> coupons</button></a>
-                <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                <a href="/admin/salesReport" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
                             class="bi bi-clipboard-data-fill ms-3"></i> Sales Report</button></a>
             </div>
             <div class="adm-lgout m-1" id="l-out-btn">
@@ -63,13 +63,19 @@
                     <% category.forEach((value,i)=>{ %>
                       <tr>
                         <th scope="row"><%= i+1 %></th>
-                        <td><%= value.name %></td><%=  %>
+                        <td><%= value.name %></td>
                         <td>
-                           <form action="/admin/removeCategory" onsubmit="return confirm('Do you want unlist ?')" method="post">
+                          <% if(value.status == true){ %>
+                           <form action="/admin/removeCategory" onsubmit="return confirm('Do you want unlist this category ?')" method="post">
                               <input type="hidden" name="id" value="<%= value._id %>">   
                               <button type="submit" class="btn text-black fw-bold" style="background-color: #58d645;">True</button>                                                                       
                             </form>
-                            </div>
+                          <% }else{ %>
+                            <form action="/admin/recoverCategory" onsubmit="return confirm('Do you want list this category ?')" method="post">
+                              <input type="hidden" name="id" value="<%= value._id %>">   
+                              <button type="submit" class="btn text-black fw-bold" style="background-color: yellow;">false</button>                                                                       
+                            </form>
+                          <% } %>
                         </td>
                         <td><a href="/admin/editCategory?id=<%= value._id %>"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-pen"></i></button></a></td>
                       </tr>

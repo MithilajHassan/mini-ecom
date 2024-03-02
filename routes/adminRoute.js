@@ -1,9 +1,10 @@
 import express from "express"
-import { addCategory, adminGetLogin, adminLogout, blockUser, editCategory, getCategoryMng, getDashboard, getEditCategory, getUsers,
-        recoverCategory, removeCategory, unBlockUser, upload, verifyAdmin } from "../controllers/adminController.js"
+import {adminGetLogin, adminLogout, blockUser, getDashboard, getSalesReport, getUsers, unBlockUser, upload, verifyAdmin } from "../controllers/adminController.js"
 import { isAdmin, isAdminLogged } from "../middlewares/adminAuth.js"
 import { editImage, editProduct, getAddProduct, getEditProduct, getProductMng, productAdding, removeProduct } from "../controllers/productController.js"
-import { allOrders } from "../controllers/orderController.js"
+import { allOrders, orderDelivered, orderDetails } from "../controllers/orderController.js"
+import { addCategory, editCategory, getCategoryMng, getEditCategory, recoverCategory, removeCategory } from "../controllers/categoryController.js"
+import { addCoupon, couponListing, loadCouponMng, removeCoupon } from "../controllers/couponController.js"
 const admin_route = express.Router()
 
 
@@ -37,6 +38,18 @@ admin_route.post('/recoverCategory',isAdmin,recoverCategory)
 
 //--------Orders---------------//
 admin_route.get('/allOrders',isAdmin,allOrders)
+admin_route.post('/orderDelivered',isAdmin,orderDelivered)
+admin_route.get('/detailsOfOrder',isAdmin,orderDetails)
+
+
+//----------- Sales Report ------------//
+admin_route.get('/salesReport',isAdmin,getSalesReport)
+
+//--------Category---------------//
+admin_route.get('/couponManage',isAdmin,loadCouponMng)
+admin_route.post('/addcoupon',isAdmin,addCoupon)
+admin_route.post('/removeCoupon',isAdmin,removeCoupon)
+admin_route.post('/listCoupon',isAdmin,couponListing)
 
 //-------------Logout------------//
 admin_route.get('/adminLogout', isAdmin, adminLogout)

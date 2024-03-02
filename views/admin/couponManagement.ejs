@@ -1,0 +1,160 @@
+<%- include('../layouts/adminHeader') -%>
+
+    <section class="container-fluid p-0 d-flex ">
+        <aside class="side-bar mt-4 me-2" id="aside-menu">
+            <button class="side-menu border-0 m-1" id="menu-btn"  onclick="asideShow()"><span
+                    class="material-symbols-outlined">menu</span></button>
+            <div class="menu-items m-1 pt-2" id="menu-page">
+                <a href="/admin/dashboard" class="text-black text-decoration-none"><button
+                        class="admn-btn mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i>
+                        Dashboard</button></a>
+                <a href="/admin/users" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-people-fill ms-3"></i> Customers</button></a>
+                <a href="/admin/productManage" class="text-black text-decoration-none"><button
+                        class="admn-btn mb-2 w-100 text-start "><i class="bi bi-archive-fill ms-3"></i>
+                        Products</button></a>
+                <a href="/admin/allOrders" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-file-earmark-fill ms-3"></i> Orders</button></a>
+                <a href="/admin/categoryManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
+                <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-card-image ms-3"></i> Banners</button></a>
+                <a href="/admin/couponManage" class="text-black text-decoration-none"><button class="admn-btn-A mb-2 w-100 text-start "><i
+                            class="bi bi-star-fill ms-3"></i> coupons</button></a>
+                <a href="/admin/salesReport" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                            class="bi bi-clipboard-data-fill ms-3"></i> Sales Report</button></a>
+            </div>
+            <div class="adm-lgout m-1" id="l-out-btn">
+                <a class="text-black text-decoration-none" href="/admin/adminLogout"><button
+                        class="admn-btn w-100 text-start "><i class="bi bi-box-arrow-right ms-3"></i>
+                        Logout</button></a>
+            </div> 
+        </aside>
+        <div class="mt-4 p-2 w-75 vh-75">
+            <button type="button" class="btn text-black fw-bold mb-2" onclick="addCoupon()" style="background-color: #58d645;"><i class="fa-solid fa-plus"></i> Add Coupon</button></a>
+              <div class="table-responsive">
+                <table class="table table-bordered table-success">
+                  <thead class="table-dark">
+                    <tr>
+                      <th scope="col">Coupon</th>
+                      <th scope="col">Discount</th>   
+                      <th scope="col">Maximum Purchases</th>             
+                      <th scope="col">Limit</th>
+                      <th scope="col">Expriy Date</th> 
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if(coupons !== 'undefined'&& coupons.length > 0){ %>
+                    <% typeof coupons.forEach((item,i) => { %>
+                      <tr id="tr-<%= item.code %>">
+                        <td><%= item.code %></td>
+                        <td><%= item.discount %>%</td>
+                        <td>₹<%= item.maxPurchases %></td>
+                        <td><%= item.limit %></td>
+                        <td><%= item.expiryDate.toLocaleDateString() %></td>
+                        <td><%= item.isActive == true ? 'Listed' : 'Unlisted' %></td>
+                        <td><div class="d-flex">
+                          <form action="/admin/listCoupon" method="post">
+                            <input type="hidden" name="code" value="<%= item.code %>" >
+                            <input type="hidden" name="status" value="<%=item.isActive %>" >
+                            <button type="submit" class="btn <% if( item.isActive == false ){ %> btn-success <% }else{ %> btn-warning <% } %> me-1"><%= item.isActive == false ? 'List' : 'Unlist' %></button>
+                          </form>
+                              <button data-couponCode="<%= item.code %>" onclick="removeCoupon('<%= item.code %>')" id="couponRemoveBtn" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                      </tr>
+                    <% }) %>
+                    <% }else{ %>
+                      <tr>
+                        <td colspan="5" class="text-center fw-bold">Coupons not available</td>
+                      </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>
+          </div>
+    </section>
+
+    <div class="modal " data-bs-backdrop="static" id="customModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Coupon</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="couponForm" action="/admin/addCoupon" method="post">
+                    <div class="mb-3">
+                      <input type="number" class="form-control" name="discount" placeholder="Discount percentage" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                      <input type="number" class="form-control" name="maxPurchases" placeholder="Max purchases price" min="500" required>
+                    </div>
+                    <div class="mb-3">
+                      <input type="number" class="form-control" name="limit" placeholder="Limit" min="0"  required>
+                    </div>
+                    <div class="mb-3">
+                      <input type="number" class="form-control" name="expiryDays" min="1" placeholder="For how many days" required>
+                    </div>
+                    <button id="formSubBtn" type="submit" hidden>submit</button>
+                  </form>
+                  <p id="errMsg" class="text-danger text-center"></p>
+            </div>          
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+<%- include('../layouts/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const modal = new bootstrap.Modal(document.getElementById('customModal'))
+    function addCoupon() {    
+        modal.show()
+    }
+    async function submitForm() {
+        document.getElementById('formSubBtn').click()
+    }
+
+    async function removeCoupon(couponCode) {
+        try {
+          const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You want to remove this coupon?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Remove it",
+            reverseButtons: true
+        })
+
+        if (result.isConfirmed) {
+          const response = await axios.post('/admin/removeCoupon',{couponCode})
+          console.log(response)
+          if(response){
+            const coupon_tr = document.getElementById(`tr-${couponCode}`)
+            if(response.data.isEnd){
+              coupon_tr.innerHTML=`<td colspan="5" class="text-center fw-bold">Coupons not available</td>`
+            }else{
+              coupon_tr.remove()
+            }
+            Swal.fire({
+              title: "Deleted!",
+              text: "That coupon has been deleted.",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        }
+        } catch (err) {
+          console.error(err)
+        }
+    }
+   
+</script>

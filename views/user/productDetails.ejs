@@ -35,12 +35,74 @@
                         <button type="submit" class="btn fw-bold" style="background-color: #ff9f00;">ADD TO CART</button>
                     </form>                  
                 <% } %>
-                <button class="btn fw-bold" style="background-color: #fb641b;">ADD TO WISHLIST</button>
+                <% if(typeof isInWish !=='undefined'){ %>
+                    <button class="btn fw-bold" id="add-wish" data-productId="<%= product._id %>" style="background-color: #fb641b;" hidden>ADD TO WISHLIST</button>
+                    <button class="btn fw-bold" id="remove-wish" data-productId="<%= product._id %>" style="background-color: #fb641b;">REMOVE FROM WISHLIST</button>
+                <% }else{ %>
+                    <button class="btn fw-bold" id="add-wish" data-productId="<%= product._id %>" style="background-color: #fb641b;">ADD TO WISHLIST</button>
+                    <button class="btn fw-bold" id="remove-wish" data-productId="<%= product._id %>" style="background-color: #fb641b;" hidden>REMOVE FROM WISHLIST</button>
+                <% } %>
             </div>
             <% } %>
         </div>      
      </div>
 </div>
-
+<div class="position-fixed bottom-0 start-50 translate-middle p-3" style="z-index: 11">
+    <div class="toast bg-dark text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+        <div class="toast-body fw-bold">
+            <h6 id="toast-body"></h6>  
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    </div>
+</div>
 
 <%- include('../layouts/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const options = {
+    width: 400,
+    zoomWidth: 300,
+    offset: {vertical: 0, horizontal: 10}
+ }
+    new ImageZoom(document.getElementById('zoom-div'),options)
+
+    const addWishBtn = document.getElementById('add-wish');
+const removeWishBtn = document.getElementById('remove-wish');
+
+if (addWishBtn && removeWishBtn) {
+    addWishBtn.addEventListener('click', async () => {
+        try {
+            const productId = addWishBtn.getAttribute('data-productId');
+            const response = await axios.post('/addToWishlist', { productId });
+            document.getElementById('toast-body').innerText = response.data.message;
+            const toastEl = document.querySelector('.toast');
+            const toast = new bootstrap.Toast(toastEl, {
+                autohide: true,
+                delay: 2000
+            });
+            toast.show();
+            addWishBtn.setAttribute('hidden', 'true');
+            removeWishBtn.removeAttribute('hidden');
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
+    removeWishBtn.addEventListener('click', async () => {
+        const productId = removeWishBtn.getAttribute('data-productId');
+        const response = await axios.post('/removeWishProduct', { productId });
+        document.getElementById('toast-body').innerText = response.data.message;
+        const toastEl = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastEl, {
+            autohide: true,
+            delay: 2000
+        });
+        toast.show();
+        removeWishBtn.setAttribute('hidden', 'true');
+        addWishBtn.removeAttribute('hidden');
+    });
+}
+
+</script>

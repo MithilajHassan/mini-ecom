@@ -3,12 +3,14 @@ import { Schema, model } from "mongoose";
 const orderSchema = new Schema({
     userId:{
         type:Schema.ObjectId,
-        require:true
+        require:true,
+        ref:'User'
     },
     products:[{
         productId:{
-            type:String,
-            require:true
+            type:Schema.ObjectId,
+            require:true,
+            ref: 'Product'
         },quantity:{
             type:Number,
             require:true,
@@ -16,6 +18,9 @@ const orderSchema = new Schema({
             type:String,
             require:true,
             default:'Pending'
+        },deliveredAt:{
+            type:Date,
+            require:false
         }     
     }],    
     totalAmount:{
@@ -28,7 +33,12 @@ const orderSchema = new Schema({
     },
     addressId:{
         type:Schema.ObjectId,
-        require:true
+        require:true,
+    },
+    isPaid:{
+        type:Boolean,
+        require:true,
+        default:false
     },
     createdAt:{
         type: Date,

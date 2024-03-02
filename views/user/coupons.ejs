@@ -1,0 +1,102 @@
+<%- include('../layouts/header') -%>
+
+<div class="container-fluid d-flex">
+  <!-- Sidebar -->
+  <aside class="aside-bar px-0" id="aside-menu">
+      <button class="side-menu-btn border-0 m-1" id="menu-btn" onclick="menubarShow()">
+          <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="menu-cotnt px-2 py-2 border rounded z-1 bg-light" id="menu-div">
+          <div class="bg-white border-bottom shadow-sm d-flex p-3 mb-3" style="height: 73px;">
+              <img src="/img/default.jpg" class="rounded-circle me-3" width="45vw" alt="">
+              <small>Hello,<br><span class="fw-bold "><%= user.name %></span></small>
+          </div>
+          <ul class="nav flex-column">
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link active pt-3" aria-current="page" href="/profile">
+                      <i class="bi bi-person-square me-2"></i>My Profile
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="/myOrders">
+                      <i class="bi bi-box-fill me-2"></i>My Orders
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="/userAddress">
+                      <i class="fa-solid fa-address-card me-2"></i>Address Management
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="/wishlist">
+                      <i class="bi bi-heart-fill me-2"></i>Wishlist
+                  </a>
+              </li>
+              <li class="side-menu nav-item border-bottom shadow-sm" style="background-color: #7ed371;">
+                  <a class="nav-link pt-3" aria-current="page" href="/myCoupons">
+                      <i class="fa-solid fa-ticket me-2"></i>Coupons
+                  </a>
+              </li>
+              <li class="side-menu nav-item bg-white border-bottom shadow-sm">
+                  <a class="nav-link pt-3" aria-current="page" href="/wallet">
+                    <i class="fa-solid fa-wallet me-2"></i>Wallet
+                  </a>
+              </li>
+          </ul>
+      </div>
+  </aside>
+  <!-- Main Content -->
+  <div class="container mb-3 ps-0 z-0">
+      <div class="p-3 m-2">
+        <div class="list-group bg-white mb-2">
+          <h5 class="mx-4 mt-2">Available Coupons</h5>
+        </div>
+          <div class="list-group bg-white">
+            <div class="table-responsive">
+                <table class="table  ">
+                  <thead class="">
+                    <tr>
+                      <th scope="col">S.No</th> 
+                      <th scope="col">Discount</th>   
+                      <th scope="col">Maximum Purchases</th>  
+                      <th scope="col">Expriy Date</th> 
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if(coupons !== 'undefined'&& coupons.length > 0){ %>
+                    <% typeof coupons.forEach((item,i) => { %>
+                      <tr id="tr-<%= item.code %>">
+                        <td><%= i+1 %></td>
+                        <td><%= item.discount %>%</td>
+                        <td>₹<%= item.maxPurchases %></td>
+                        <td><%= item.expiryDate.toLocaleDateString() %></td>
+                      </tr>
+                    <% }) %>
+                    <% }else{ %>
+                      <tr>
+                        <td colspan="5" class="text-center fw-bold">Coupons not available now</td>
+                      </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>            
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="position-fixed bottom-0 start-50 translate-middle p-3" style="z-index: 11">
+    <div class="toast bg-dark text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+        <div class="toast-body fw-bold">
+            <h6 id="toast-body"></h6>  
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    </div>
+</div>
+<%- include('../layouts/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+ 
+</script>

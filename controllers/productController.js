@@ -102,7 +102,8 @@ export const editImage = async(req,res)=>{
 export const removeProduct = async(req,res)=>{
     try {
         const id = req.body.id
-        await Product.findOneAndUpdate({_id:id},{$set:{is_there:false}})       
+        await Product.findOneAndUpdate({_id:id},{$set:{is_there:false}})
+               
         res.status(200).redirect('/admin/productManage')
     } catch (err) {
         console.log(err)

@@ -1,11 +1,13 @@
 import {EditUserProfie, EditingUserProfie, changePass, checkOtpForForgot, forgotpass, getForgotpass, getHome, getLogin,
-        getOtp, getOtpForForgot, getPasswordChange, loadSignup, passwordChanging, productDetails, resend, resendForgot, 
+        getOtp, getOtpForForgot, getPasswordChange, getWallet, loadSignup, passwordChanging, productDetails, resend, resendForgot, 
         signuping, userLogout,userProfie,verifyLogin, verifyOtp}  from '../controllers/userController.js'
 import { isOtpSent, is_logged, is_logout } from '../middlewares/auth.js'
 import { addToCart, cartQuantiyMinus, cartQuantiyPlus, getCart, removeCartProduct } from '../controllers/cartController.js'
 import { addAddress, deleteAddress, editAddress, getAddAddress, getEditAddress, userAddress } from '../controllers/addressController.js'
-import { cancelOrder, getOrder, makeOrder, myOrders } from '../controllers/orderController.js'
+import { cancelOrder, getOrder, makeOrder, myOrderDetails, myOrders, orderSuccessful, returnOrder,  } from '../controllers/orderController.js'
 import express from 'express'
+import { addToWishlist, getWishlist, removeWishProduct } from '../controllers/wishlistController.js'
+import { getCoupons } from '../controllers/couponController.js'
 
 const user_route = express.Router()
 
@@ -27,6 +29,9 @@ user_route.get('/checkout',is_logout,getOrder)
 user_route.post('/checkout',is_logout,makeOrder)
 user_route.get('/myOrders',is_logout,myOrders)
 user_route.post('/cancelOrder/:id',is_logout,cancelOrder)
+user_route.post('/returnOrder/:id',is_logout,returnOrder)
+user_route.get('/orderSuccessful',is_logout,orderSuccessful)
+user_route.get('/orderDetails',is_logout,myOrderDetails)
 
 //------User profile-------//
 user_route.get('/profile',is_logout,userProfie)
@@ -35,6 +40,14 @@ user_route.post('/editProfile',is_logout,EditingUserProfie)
 user_route.get('/changePassword',is_logout,getPasswordChange)
 user_route.post('/changePassword',is_logout,passwordChanging)
 
+// ----------- user whishlist ------------//
+user_route.post('/addToWishlist',addToWishlist)
+user_route.get('/wishlist',is_logout,getWishlist)
+user_route.post('/removeWishProduct',removeWishProduct)
+
+//-------------user Wallet------------------//
+user_route.get('/wallet',is_logout,getWallet)
+
 // ----------- user Address ------------//
 user_route.get('/userAddress',is_logout,userAddress)
 user_route.get('/addAddress',is_logout,getAddAddress)
@@ -42,6 +55,9 @@ user_route.post('/addAddress',is_logout,addAddress)
 user_route.get('/editAddress',is_logout,getEditAddress)
 user_route.post('/editAddress',is_logout,editAddress)
 user_route.post('/deleteAddress',is_logout,deleteAddress)
+
+//-------------Coupons------------------//
+user_route.get('/myCoupons',is_logout,getCoupons)
 
 //------User Loign-------//
 user_route.get('/login',is_logged,getLogin)

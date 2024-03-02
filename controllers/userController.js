@@ -5,6 +5,7 @@ import Category from '../models/categoryModel.js'
 import Otp from '../models/otpModel.js'
 import bcrypt from 'bcrypt'
 import Cart from '../models/cartModel.js'
+import Wishlist from '../models/wishlistModel.js'
 
 // ----------Password bcrypting-----------//
 const securePassword = async (password) => {
@@ -245,7 +246,7 @@ export const getHome = async(req,res)=>{
                 return { price: 1 }
               case 'highToLow':
                 return { price: -1 }
-              case 'data':
+              case 'date':
                 return { createdAt: -1 }
               default:
                 return {}
@@ -271,6 +272,7 @@ export const getHome = async(req,res)=>{
         const categoryData = await Category.find({status:true})
         const productData = await Product.find({
             is_there:true,
+            category: { $in: categoryData.map(cat => cat._id) },
             $or:[
                 {name:{$regex:`.*${search}.*`,$options:'i'}}
             ],
@@ -282,6 +284,7 @@ export const getHome = async(req,res)=>{
         .skip( (page-1) * limit)
         const productCount = await Product.find({
             is_there:true,
+            category: { $in: categoryData.map(cat => cat._id) },
             $or:[
                 {name:{$regex:`.*${search}.*`,$options:'i'}}
             ],
@@ -334,14 +337,14 @@ export const productDetails = async(req,res)=>{
             if(userData.is_blocked == true){
                 res.status(403).render('login',{bUser:userData})
             }else{
-                const cart = await Cart.findOne({userId})
-                if(cart){
-                    const isInCart = cart.product.some(item=> item.productId === id )
-                    if(isInCart){
-                        res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData,isInCart})
-                    }else{
-                        res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData})
-                    }
+                const isInCart = await Cart.findOne({userId,'product.productId':id})
+                const isInWish = await Wishlist.findOne({userId,'products.productId':id})
+                if(isInCart && isInWish){
+                    res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData,isInCart,isInWish})
+                }else if(isInCart){
+                    res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData,isInCart})
+                }else if(isInWish){
+                    res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData,isInWish})
                 }else{
                     res.status(200).render('productDetails',{user:userData,product:productData,category:categoryData,user:userData})
                 }
@@ -385,7 +388,7 @@ export const getPasswordChange = async(req,res)=>{
         const userData = await User.findById({_id:req.session.user_id})
         res.status(200).render('resetPassword',{user:userData})
     } catch (err) {
-        console.log(err);
+        console.log(err)
     }
 }
 export const passwordChanging = async(req,res)=>{
@@ -399,6 +402,18 @@ export const passwordChanging = async(req,res)=>{
         }else{
             res.status(200).render('resetPassword',{user:userData,mes:'Current password is wrong'})
         }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+// ----------- user wallet ------------//
+export const getWallet = async (req, res) => {
+
+    try {       
+        const userId = req.session.user_id
+        const userData = await User.findOne({ _id: userId })
+        res.status(200).render('wallet',{user:userData})
     } catch (err) {
         console.log(err)
     }

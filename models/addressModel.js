@@ -37,5 +37,5 @@ const addressSchema = new Schema({
     }] 
 })
 
-const Address = model('address',addressSchema)
+const Address = model('Address',addressSchema)
 export default Address

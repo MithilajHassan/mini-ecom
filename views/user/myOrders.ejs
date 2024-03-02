@@ -28,18 +28,18 @@
                   </a>
               </li>
               <li class="side-menu nav-item bg-white border-bottom shadow-sm">
-                  <a class="nav-link pt-3" aria-current="page" href="#">
+                  <a class="nav-link pt-3" aria-current="page" href="/wishlist">
                       <i class="bi bi-heart-fill me-2"></i>Wishlist
                   </a>
               </li>
               <li class="side-menu nav-item bg-white border-bottom shadow-sm">
-                  <a class="nav-link pt-3" aria-current="page" href="#">
+                  <a class="nav-link pt-3" aria-current="page" href="/myCoupons">
                       <i class="fa-solid fa-ticket me-2"></i>Coupons
                   </a>
               </li>
               <li class="side-menu nav-item bg-white border-bottom shadow-sm">
-                  <a class="nav-link pt-3" aria-current="page" href="#">
-                      <i class="fa-solid fa-ticket me-2"></i>Wallet
+                  <a class="nav-link pt-3" aria-current="page" href="/wallet">
+                    <i class="fa-solid fa-wallet me-2"></i>Wallet
                   </a>
               </li>
           </ul>
@@ -52,28 +52,36 @@
           <div class="list-group">
               <% if (typeof orders !=='undefined' && orders.length> 0) { %>
                   <% orders.forEach((item, index)=> { %>
-                      <div class="list-group-item">
-                          <div class="d-flex">
-                              <a href="/product/<%= item.product._id %>">
-                                  <img src="/productImgs/<%= item.product.images[0].filename %>" class="product-image me-3">
-                              </a>
-                              <div>
-                                  <h5 class="mb-1 overflow-hidden "><%= item.product.name %></h5>
-                                  <b><p class="mb-1">Price: ₹<%= item.price %></p></b>
-                                  <% if (item.status === 'Pending') { %>
-                                    <b><p class="mb-1">Status: <span class="text-warning" id="status-<%= item.product._id %>"><%= item.status %></span></p></b>
+                      <div class="list-group-item border my-2">
+                        <a href="/orderDetails?id=<%= item.orderId %>" class="text-decoration-none text-black"><div class="row">
+                            <div class="col-auto"> 
+                                <img src="/productImgs/<%= item.product.images[0].filename %>" class="product-image me-3">
+                            </div>
+                            <div class="col-auto">
+                                    <h5 class="mb-1 overflow-hidden "><%= item.product.name %></h5>
+                                    <b><p class="mb-1">Quantity: <%= item.quantity %></p></b>
+                                    <b><p class="mb-1">Price: ₹<%= item.price %></p></b>
+                                <% if (item.status === 'Pending') { %>
+                                    <b><p class="mb-1">Status: <span class="text-primary" id="status-<%= index %>"><%= item.status %></span></p></b>
                                 <% } else if (item.status === 'Cancelled') { %>
-                                    <b><p class="mb-1">Status: <span class="text-danger" id="status-<%= item.product._id %>"><%= item.status %></span></p></b>
+                                    <b><p class="mb-1">Status: <span class="text-danger" id="status-<%= index %>"><%= item.status %></span></p></b>
                                 <% } else if (item.status === 'Delivered') { %>
-                                    <b><p class="mb-1">Status: <span class="text-success" id="status-<%= item.product._id %>"><%= item.status %></span></p></b>
+                                    <b><p class="mb-1">Status: <span class="text-success" id="status-<%= index %>"><%= item.status %></span></p></b>
+                                <% } else if (item.status === 'Returned') { %>
+                                    <b><p class="mb-1">Status: <span class="text-warning" id="status-<%= index %>"><%= item.status %></span></p></b>
                                 <% } else { %>
-                                    <b><p class="mb-1">Status: <span class="text"><%= item.status %></span></p></b>
+                                    <b><p class="mb-1">Status: <span class=""><%= item.status %></span></p></b>
                                 <% } %>
-                              </div>
-                          </div>
-                          <div class="text-end">
-                            <button  class="btn btn-danger" id="cancel-<%= item.product._id %>" onclick="cancelOrder('<%= item.product._id %>')">Cancel</button>
-                        </div>
+                            </div>
+                            
+                            <div class="col-auto flex-grow-1 d-flex justify-content-end align-items-end">                           
+                                <% if (item.status === 'Pending') { %>
+                                      <button  class="btn btn-danger btn-sm" id="cancel-<%= index %>" onclick="cancelOrder('<%= item.orderId %>','<%= index %>','<%= item.quantity %>','<%= item.product._id %>')">Cancel</button>
+                                <% }else if(item.status === 'Delivered'){ %> 
+                                    <button  class="btn btn-warning btn-sm" id="return-<%= index %>" onclick="returnOrder('<%= item.orderId %>','<%= index %>','<%= item.quantity %>','<%= item.product._id %>')">Return</button>
+                                <% } %>
+                            </div>
+                          </div></a>                       
                       </div>
                   <% }) %>
               <% } else { %>
@@ -86,22 +94,101 @@
 
 <%- include('../layouts/footer') -%>
 <script>
-    const cancelOrder = async (productId)=>{
+    const cancelOrder = async (orderId,indexOfBtn,quantity,productId)=>{
+        event.preventDefault()
+        console.log(quantity,productId)
         try {
-            const response = await fetch("/cancelOrder/" + productId, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            cancelButtonText: "Back",
+            confirmButtonText: "Cancel it!"
             })
-            if(response.status == 200){
-                const cancelBtn = document.getElementById(`cancel-${productId}`)
-                cancelBtn.remove()
-                const status = document.getElementById(`status-${productId}`)
-                status.innerHTML = 'Cancelled'
-            }else {
-                console.error("Failed to cancel the product.")
-            } 
+
+            if (result.isConfirmed) {
+                const response = await fetch("/cancelOrder/" + orderId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                    productId: productId
+                })
+                }) 
+                if(response.status == 200){
+                    const cancelBtn = document.getElementById(`cancel-${indexOfBtn}`)
+                    cancelBtn.remove()
+                    const status = document.getElementById(`status-${indexOfBtn}`)
+                    status.innerHTML = 'Cancelled'
+                    status.classList.remove('text-primary')
+                    status.classList.add('text-danger')
+                }else {
+                    console.error("Failed to cancel the product.")
+                }         
+            }
+        } catch (err) {
+            console.error(err)
+        }    
+    }
+
+    const returnOrder = async (orderId,indexOfBtn,quantity,productId)=>{
+        event.preventDefault()
+        try {
+            const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to return the product?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "rgb(255 206 0)",
+            cancelButtonColor: "#3085d6",
+            cancelButtonText: " No ",
+            confirmButtonText: "Return"
+            })
+
+            if (result.isConfirmed) {
+                const response = await fetch("/returnOrder/" + orderId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                    productId: productId
+                })
+                }) 
+                if(response.status == 200){
+                    const responseData = await response.json()
+                    console.log(responseData ,responseData.isExpired , responseData.message )
+                    if(responseData.isExpired == true){
+                        Swal.fire({
+                            title: "Date expired",
+                            text: responseData.message,
+                            icon: "info",
+                        })
+
+                    }else{
+                        const cancelBtn = document.getElementById(`return-${indexOfBtn}`)
+                        cancelBtn.remove()
+                        const status = document.getElementById(`status-${indexOfBtn}`)
+                        status.innerHTML = 'Returned'
+                        status.classList.remove('text-success')
+                        status.classList.add('text-warning')
+                        Swal.fire({
+                            title: "Request sent",
+                            text: "Money will be put in the wallet",
+                            icon: "success"
+                        })
+                    }
+                    console.log(response.data)
+                }else {
+                    console.error("Failed to return the product.")
+                }         
+            }
         } catch (err) {
             console.error(err)
         }    

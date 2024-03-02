@@ -51,9 +51,14 @@ export const cartQuantiyPlus = async(req,res)=>{
     try {
         const productId = req.body.productId
         const userId = req.session.user_id
-        await Cart.updateOne({userId,"product.productId":productId},{$inc:{"product.$.quantity":1}})
-        await Product.updateOne({_id:productId},{$inc:{quantity:-1}})
-        res.status(200).json({success:true})   
+        const prod = await Product.findOne({ _id: productId },{ _id: 0, quantity: 1 })
+        if(Number(prod.quantity > 0)){
+            await Cart.updateOne({userId,"product.productId":productId},{$inc:{"product.$.quantity":1}})
+            await Product.updateOne({_id:productId},{$inc:{quantity:-1}})
+            res.status(200).json({success:true})   
+        }else{
+            res.status(200).json({success:false})
+        }
     } catch (err) {
         console.log(err)
     }

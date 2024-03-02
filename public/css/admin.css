@@ -104,6 +104,11 @@ body {
     background-color: #d1e7dd; 
     border-radius: 10px;
 }
+.product-image {
+    max-width: 50px;
+    max-height: 50px;
+}
+
 
 
 

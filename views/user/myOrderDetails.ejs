@@ -1,0 +1,48 @@
+<%- include('../layouts/header') -%>
+
+<div class="container pb-3">
+    <h1 class="mt-2 mb-4">Order Details</h1>
+    <% if (order) { %>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Order Status: <span class="<% if (orderProduct.status === 'Pending') { %>text-primary<% } else if (orderProduct.status === 'Cancelled') { %>text-danger<% } else if (orderProduct.status === 'Delivered') { %>text-success<% } %>"><%= orderProduct.status %></span></h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Order ID:</strong> #<%= order._id %></p>
+                        <p><strong>User Name:</strong> <%= user.name %></p>
+                        <p><strong>Total Amount:</strong> ₹<%= totalAmount %></p>
+                        <p><strong>Payment Method:</strong> <%= order.payment %></p>
+                        <p><strong>Address:</strong> <%= orderAddress.address %>, <%= orderAddress.city %>, <%= orderAddress.state %> <%= orderAddress.district %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Product:</h5>
+                        <ul class="list-group">
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md-auto">
+                                            <img src="/productImgs/<%= orderProduct.productId.images[0].filename %>" class="product-image me-3" style="max-width: 100px;">
+                                        </div>
+                                        <div class="col">
+                                            <p><strong>Product ID:</strong> #<%= orderProduct.productId._id %></p>
+                                            <p><strong>Product Name:</strong> <%= orderProduct.productId.name %></p>
+                                            <p><strong>Price:</strong> ₹<%= orderProduct.productId.price %></p>
+                                            <p><strong>Quantity:</strong> <%= orderProduct.quantity %></p>
+                                            <p><strong>Final Price:</strong> <%= orderProduct.productId.finalPrice %></p>
+                                        </div>
+                                    </div>
+                                </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning" role="alert">
+            No order details found.
+        </div>
+    <% } %>
+</div>
+
+<%- include('../layouts/footer') -%>
