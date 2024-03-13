@@ -16,11 +16,10 @@ export const getCart = async(req,res)=>{
                     product,
                     quantity:item.quantity
                 })
-                totalPrice += parseInt(product.price * item.quantity)
+                totalPrice += parseInt((product.price - parseInt(product.price *(product.offPrice / 100))) * item.quantity)
             }
-        }
-        const url = `/checkout?cart=${encodeURIComponent(JSON.stringify(products))}&amount=${totalPrice}`      
-        res.status(200).render('cart',{user:userData,cart:products,totalPrice,url})   
+        }    
+        res.status(200).render('cart',{user:userData,cart:products,totalPrice})   
     } catch (err) {
         console.log(err)
     }

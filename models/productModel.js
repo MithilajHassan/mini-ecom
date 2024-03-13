@@ -25,6 +25,10 @@ const productSchema = new Schema({
     },is_there:{
         type:Boolean,
         default:true
+    },offPrice:{
+        type:Number,
+        required:false,
+        default:0
     },createdAt: {
         type: Date,
         default: Date.now,

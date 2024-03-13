@@ -58,6 +58,7 @@
               </div></a>
               <% if(address && typeof address !== 'undefined'){ %>
                 <% address.addresses.forEach((value,index)=>{ %>
+                  <% if( value.active == true){ %>
                   <div class="border mx-4 my-2 ps-3" id="address-<%= index %>">
                     <div class="d-flex my-3 justify-content-end pe-2">
                       <p class="fw-bold me-3"><%= value.name %></p>
@@ -75,6 +76,7 @@
                     </div>
                     <p class="text-nowrap overflow-hidden"><%= value.address %></p>
                   </div>
+                  <% } %>
                 <% }) %>
               <% }else{ %>
                 <h5 class="text-center text-black">There is no address</h5>

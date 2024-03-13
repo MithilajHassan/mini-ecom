@@ -109,3 +109,15 @@ export const removeProduct = async(req,res)=>{
         console.log(err)
     }
 }
+
+export const applyProductOffer = async(req,res)=>{
+    try {
+        const {offer,productId} = req.body
+        console.log(offer,productId)
+        const offers = await Product.updateOne({_id:productId},{$set:{offPrice:offer}},{upsert:true})   
+        console.log(offers)           
+        res.redirect('/admin/productManage')
+    } catch (err) {
+        console.log(err)
+    }
+}

@@ -8,6 +8,10 @@ const categorySchema = new Schema({
         type:Boolean,
         require:true,
         default:true
+    },offer:{
+        type:Number,
+        require:false,
+        default:0
     }
 })
 

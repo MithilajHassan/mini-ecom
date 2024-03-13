@@ -17,7 +17,10 @@ const orderSchema = new Schema({
         },status:{
             type:String,
             require:true,
-            default:'Pending'
+            default:'Processing'
+        },price:{
+            type:Number,
+            require:true,
         },deliveredAt:{
             type:Date,
             require:false
@@ -34,11 +37,16 @@ const orderSchema = new Schema({
     addressId:{
         type:Schema.ObjectId,
         require:true,
+        ref:'Address'
     },
     isPaid:{
         type:Boolean,
         require:true,
         default:false
+    },
+    discount:{
+        type:Number,
+        require:false
     },
     createdAt:{
         type: Date,

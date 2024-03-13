@@ -37,8 +37,9 @@
                   <thead class="table-dark">
                     <tr>
                       <th scope="col">Coupon</th>
-                      <th scope="col">Discount</th>   
-                      <th scope="col">Maximum Purchases</th>             
+                      <th scope="col">Discount</th>
+                      <th scope="col">Min Purchases</th>    
+                      <th scope="col">Max Purchases</th>             
                       <th scope="col">Limit</th>
                       <th scope="col">Expriy Date</th> 
                       <th scope="col">Status</th>
@@ -51,11 +52,13 @@
                       <tr id="tr-<%= item.code %>">
                         <td><%= item.code %></td>
                         <td><%= item.discount %>%</td>
+                        <td>₹<%= item.minPurchases %></td>
                         <td>₹<%= item.maxPurchases %></td>
                         <td><%= item.limit %></td>
                         <td><%= item.expiryDate.toLocaleDateString() %></td>
                         <td><%= item.isActive == true ? 'Listed' : 'Unlisted' %></td>
                         <td><div class="d-flex">
+                          <button class="btn btn-primary me-1" onclick="getEditCoupon('<%= item._id %>')"><i class="fa-solid fa-pen"></i></button>
                           <form action="/admin/listCoupon" method="post">
                             <input type="hidden" name="code" value="<%= item.code %>" >
                             <input type="hidden" name="status" value="<%=item.isActive %>" >
@@ -68,7 +71,7 @@
                     <% }) %>
                     <% }else{ %>
                       <tr>
-                        <td colspan="5" class="text-center fw-bold">Coupons not available</td>
+                        <td colspan="8" class="text-center fw-bold">Coupons not available</td>
                       </tr>
                     <% } %>
                   </tbody>
@@ -86,18 +89,23 @@
             </div>
             <div class="modal-body">
                 <form id="couponForm" action="/admin/addCoupon" method="post">
+                  <div class="mb-3">
+                    <input type="text" class="form-control" id="code" name="code" placeholder="Coupon code" minlength="8" maxlength="8" required>
+                  </div>
                     <div class="mb-3">
-                      <input type="number" class="form-control" name="discount" placeholder="Discount percentage" min="0" max="100" required>
+                      <input type="number" class="form-control" id="discount" name="discount" placeholder="Discount percentage" min="0" max="100" required>
+                    </div>
+                    <div class="d-flex mb-3 justify-content-between">
+                      <input type="number" class="form-control me-1" id="minP" name="minPurchases" placeholder="Min purchases price" max="5000" min="500" required>
+                      <input type="number" class="form-control" id="maxP" name="maxPurchases" placeholder="Max purchases price" max="5000" min="500" required>
                     </div>
                     <div class="mb-3">
-                      <input type="number" class="form-control" name="maxPurchases" placeholder="Max purchases price" min="500" required>
+                      <input type="number" class="form-control" id="limit" name="limit" placeholder="Limit" min="0"  required>
                     </div>
                     <div class="mb-3">
-                      <input type="number" class="form-control" name="limit" placeholder="Limit" min="0"  required>
+                      <input type="number" class="form-control" id="expiryDate" name="expiryDays" min="1" placeholder="For how many days" required>
                     </div>
-                    <div class="mb-3">
-                      <input type="number" class="form-control" name="expiryDays" min="1" placeholder="For how many days" required>
-                    </div>
+                    <input type="hidden" name="id" id="formCoupId">
                     <button id="formSubBtn" type="submit" hidden>submit</button>
                   </form>
                   <p id="errMsg" class="text-danger text-center"></p>
@@ -112,13 +120,65 @@
 <%- include('../layouts/footer') -%>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    const couponForm = document.getElementById('couponForm')
+    const errMsg = document.getElementById('errMsg')
     const modal = new bootstrap.Modal(document.getElementById('customModal'))
-    function addCoupon() {    
-        modal.show()
+    function addCoupon() {  
+      couponForm.setAttribute('action','/admin/addCoupon')  
+      couponForm.reset()
+      modal.show()
     }
-    async function submitForm() {
-        document.getElementById('formSubBtn').click()
+    function submitForm() {
+      document.getElementById('formSubBtn').click()
     }
+    couponForm.addEventListener('submit',async()=>{
+      try {
+        event.preventDefault()
+        const action = couponForm.getAttribute('action')
+        const formData = new FormData(couponForm)
+        const formObject = {}
+        formData.forEach((value, i) => {
+            formObject[i] = value
+        })
+        const maxPurchaseInput = document.getElementById('maxP')
+        const minPurchaseInput = document.getElementById('minP')
+        const maxPurchase = parseInt(maxPurchaseInput.value)
+        const minPurchase = parseInt(minPurchaseInput.value)
+        if (maxPurchase <= minPurchase) {
+          errMsg.innerText='Max purchases price must be greater than Min purchases price'
+          return 0
+        }
+        let response
+        if (action === '/admin/addCoupon') {
+          response = await axios.post('/admin/addCoupon', formObject)
+        }else{
+          response = await axios.post('/admin/editCoupon', formObject)
+        }
+            if (response.data.success){
+              location.reload()
+            }else{
+              errMsg.innerText=response.data.message
+            }
+        
+      } catch (error) {
+        console.error(error)
+      }
+    })
+
+    const getEditCoupon = async(couponId)=>{
+      const response = await axios.get('/admin/editCoupon?couponId='+couponId)
+      const coupon = response.data.coupon
+      document.getElementById('formCoupId').value = coupon._id
+      document.getElementById('code').value = coupon.code
+      document.getElementById('discount').value = coupon.discount
+      document.getElementById('minP').value = coupon.minPurchases
+      document.getElementById('maxP').value = coupon.maxPurchases
+      document.getElementById('limit').value = coupon.limit
+      document.getElementById('expiryDate').value = response.data.daysLeft
+      couponForm.setAttribute('action','/admin/editCoupon')
+      modal.show()
+    }
+
 
     async function removeCoupon(couponCode) {
         try {

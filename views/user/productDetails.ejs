@@ -10,7 +10,7 @@
             <div class="d-flex justify-content-center">
             <% product.images.forEach( (value) =>{ %>
                 <a href=""><div class="border border-dark px-2 ms-2">
-                    <img src="<%= value.path.replace('public', '') %>"  class="object-fit-contain" style="width: 3rem;">
+                    <img src="<%= value.path.replace('public', '') %>" class="object-fit-contain" style="width: 3rem;">
                 </div></a>
             <% }) %>
             </div>
@@ -20,7 +20,7 @@
             <div class="mt-5">
                 <h4 class="ms-3 " style="color: #a3a2a2;"><b><%= product.brand %></b></h4>
                 <h5 class="ms-3 "><b><%= product.name %></b></h5>
-                <h4 class="ms-3 fw-bold text-success">₹<%= product.price %></h4>
+                <div class="d-flex"><h4 class="ms-3 fw-bold text-black me-2">₹<%= product.price - parseInt(product.price * (product.offPrice / 100)) %></h4><h5 class="m-0 text-secondary text-decoration-line-through me-2">₹<%= product.price %></h5><h5 class="m-0 text-success fw-bold"><%= product.offPrice %>%</h5></div>
                 <p class="ms-3 text-black"><%= product.description %></p>
             </div>
             <% if(product.quantity == 0){ %>

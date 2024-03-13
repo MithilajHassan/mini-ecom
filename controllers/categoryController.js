@@ -1,4 +1,5 @@
 import Category from "../models/categoryModel.js"
+import Product from "../models/productModel.js"
 
 //--------Category Management--------//
 export const getCategoryMng = async(req,res)=>{
@@ -35,7 +36,7 @@ export const getCategoryMng = async(req,res)=>{
 export const addCategory = async(req,res)=>{
     try {
         const name = req.body.name
-        const existing = await Category.findOne({name})
+        const existing = await Category.findOne({name:{$regex:`^${name}`, $options: 'i'}})
         let search = req.query.search ? req.query.search : ''      
         let page = req.query.page ?  parseInt(req.query.page) : 1
         const limit = 2
@@ -173,6 +174,22 @@ export const editCategory = async(req,res)=>{
             await Category.findOneAndUpdate({_id:id},{$set:{name}})   
             res.redirect('/admin/categoryManage') 
         }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const applyCategoryOffer = async(req,res)=>{
+    try {
+        const {offer,categoryId} = req.body
+        await Category.findOneAndUpdate({_id:categoryId},{$set:{offer}})
+        const products = await Product.find({category:categoryId})       
+        for(let item of products){
+           if(parseInt(item.offPrice) < parseInt(offer)){
+            await Product.updateOne({_id:item._id},{offPrice:offer})
+           } 
+        }
+        res.redirect('/admin/categoryManage')
     } catch (err) {
         console.log(err)
     }

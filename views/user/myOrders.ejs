@@ -60,8 +60,8 @@
                             <div class="col-auto">
                                     <h5 class="mb-1 overflow-hidden "><%= item.product.name %></h5>
                                     <b><p class="mb-1">Quantity: <%= item.quantity %></p></b>
-                                    <b><p class="mb-1">Price: ₹<%= item.price %></p></b>
-                                <% if (item.status === 'Pending') { %>
+                                    <b><p class="mb-1">Price: ₹<%=  item.price %></p></b>
+                                <% if (item.status === 'Processing') { %>
                                     <b><p class="mb-1">Status: <span class="text-primary" id="status-<%= index %>"><%= item.status %></span></p></b>
                                 <% } else if (item.status === 'Cancelled') { %>
                                     <b><p class="mb-1">Status: <span class="text-danger" id="status-<%= index %>"><%= item.status %></span></p></b>
@@ -74,11 +74,18 @@
                                 <% } %>
                             </div>
                             
-                            <div class="col-auto flex-grow-1 d-flex justify-content-end align-items-end">                           
-                                <% if (item.status === 'Pending') { %>
-                                      <button  class="btn btn-danger btn-sm" id="cancel-<%= index %>" onclick="cancelOrder('<%= item.orderId %>','<%= index %>','<%= item.quantity %>','<%= item.product._id %>')">Cancel</button>
+                            <div class="col-auto flex-grow-1 flex-column d-flex justify-content-end align-items-end">                           
+                                <% if (item.status === 'Processing') { %>
+                                    <% if (item.isPaid == false && item.payment === 'upi') { %>
+                                    <div class="text-end" id="pay-<%= index %>">
+                                        <b><p>Payment : <span class="text-danger">Pending</span></p></b>
+                                        <button  class="btn btn-primary btn-sm mb-1" onclick="pay('<%= item.orderId %>','<%= item.id %>','<%= index %>','<%= item.price %>','<%= item.discount %>','<%= key_id %>')">Pay</button>
+                                    </div>
+                                    <% } %>
+                                    <button  class="btn btn-danger btn-sm" id="cancel-<%= index %>" onclick="cancelOrder('<%= item.orderId %>','<%= index %>','<%= item.quantity %>','<%= item.product._id %>')">Cancel</button>
                                 <% }else if(item.status === 'Delivered'){ %> 
-                                    <button  class="btn btn-warning btn-sm" id="return-<%= index %>" onclick="returnOrder('<%= item.orderId %>','<%= index %>','<%= item.quantity %>','<%= item.product._id %>')">Return</button>
+                                    <button class="btn btn-primary btn-sm mb-2" id="invoice-<%= index %>" onclick="getInvoice('<%= item.id %>')">Invoice</button>
+                                    <button class="btn btn-warning btn-sm" id="return-<%= index %>" onclick="returnOrder('<%= item.orderId %>','<%= index %>','<%= item.quantity %>','<%= item.product._id %>')">Return</button>
                                 <% } %>
                             </div>
                           </div></a>                       
@@ -93,7 +100,66 @@
 </div>
 
 <%- include('../layouts/footer') -%>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    const getInvoice = async(orderId)=>{
+        event.preventDefault()
+        location.href='/invoice?id='+orderId
+    }
+    const pay = async(orderId,id,index,amount,discount,key_id)=>{
+        try {
+            event.preventDefault()
+            let totalAmount = amount-discount
+            const response = await axios.get('/paymentRetry',{
+                params: {
+                    totalAmount: totalAmount,
+                    id: id
+                }
+            })
+            const options = {
+                key: key_id, 
+                amount: parseInt(totalAmount)*100, 
+                currency: 'INR',
+                name: 'Luminova',
+                description: 'Order Payment',
+                image: "/img/Logo.avif",
+                order_id: response.data.payId,
+                handler: async function (response) {                      
+                    try {
+                        const res = await axios.post('/paymentStatus', { orderId: id, status: true })
+                        console.log('Payment success:', response)
+                        if(res){
+                            document.getElementById(`pay-${index}`).remove()
+                            Swal.fire({
+                                icon: "success",
+                                title: "Payment is successful",
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    } catch (error) {
+                        console.error('Failed to update payment status:', error)
+                    }
+                },                   
+            }
+            const raz = new Razorpay(options)
+            raz.on('payment.failed',function (response) {
+                console.error('Payment failed:', response.error)
+                Swal.fire({
+                    title: "Payment failed",
+                    text: 'Payment failed you need to pay',
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 1800
+                })
+            })
+            raz.open()
+        } catch (err) {
+            console.error('Pay :'+err)
+        }
+    }
     const cancelOrder = async (orderId,indexOfBtn,quantity,productId)=>{
         event.preventDefault()
         console.log(quantity,productId)

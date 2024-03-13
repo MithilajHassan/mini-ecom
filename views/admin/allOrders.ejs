@@ -31,7 +31,7 @@
             </div>
         </aside>
         <div class="px-3 w-75">
-          <div class="d-flex justify-content-end mt-2">
+          <!-- <div class="d-flex justify-content-end mt-2">
             <div class="dropdown">
               <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Sort By
@@ -42,8 +42,8 @@
                 <a class="dropdown-item" href="/admin/allOrders?sort=highToLow">Price -- High to Low</a>
               </div>
             </div>
-          </div>
-            <div class="table-responsive mt-1">
+          </div> -->
+            <div class="table-responsive mt-4">
               <table class="table table-bordered table-success table-hover">
                 <thead class="table-dark">
                   <tr>
@@ -64,10 +64,21 @@
                       <td><%= item.user %></td>
                       <td>₹<%= item.price %></td> 
                       <td><%= item.payment %></td>
-                      <td id="statusBar-<%= item.orderId %>" class="fw-bold <% if (item.status === 'Pending') { %>text-primary<% } else if (item.status === 'Cancelled') { %>text-danger<% } else if (item.status === 'Delivered') { %>text-success<% } %>">
+                      <td id="statusBar-<%= item.orderId %>" class="fw-bold <% if (item.status === 'Processing') { %>text-primary<% } else if (item.status === 'Cancelled') { %>text-danger<% } else if (item.status === 'Delivered') { %>text-success<% } %>">
                         <%= item.status %></td>
                       <td>
-                        <button class="btn btn-success <%= item.status === 'Pending' ? '' : 'disabled' %> " id="delBtn-<%= item.orderId %>" onclick="delivered('<%= item.orderId %>','<%= item.userId %>')">Delivered</button>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Status
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-primary fw-bold" onclick="Pending('<%= item.orderId %>','<%= item.userId %>')">Processing</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger fw-bold" onclick="cancelled('<%= item.orderId %>','<%= item.userId %>')">Cancelled</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-success fw-bold" onclick="delivered('<%= item.orderId %>','<%= item.userId %>')">Delivered</a></li>
+                          </ul>
+                        </div>
                         <a href="/admin/detailsOfOrder?id=<%= item.orderId %>" class="ms-2"><button class="btn btn-primary">View</button></a>
                       </td>
                     </tr>
@@ -100,6 +111,67 @@
     <%- include('../layouts/footer') -%>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+      const Pending = async(orderId,userId)=>{
+        try {
+          const result = await Swal.fire({
+              title: "Are you sure?",
+              text: "You want to change the status?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonText: "Processing",
+              reverseButtons: true
+          })
+
+          if (result.isConfirmed) {
+            const response = await axios.post('/admin/orderPending',{orderId,userId})
+            console.log(response)
+            if(response.data.success){
+              
+              const statusBar = document.getElementById(`statusBar-${orderId}`)
+              console.log(response.data.orderStatus)
+              statusBar.classList.remove('text-danger')
+              statusBar.classList.remove('text-success')
+              statusBar.classList.add('text-primary')
+              statusBar.innerText = response.data.orderStatus
+              
+            }
+          }
+        } catch (err) {
+          console.error(err)
+        }   
+      }
+
+      const cancelled = async(orderId,userId)=>{
+        try {
+          const result = await Swal.fire({
+              title: "Are you sure?",
+              text: "You want to change the status?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              confirmButtonText: "Cancel it!",
+              reverseButtons: true
+          })
+
+          if (result.isConfirmed) {
+            const response = await axios.post('/admin/orderCancelling',{orderId,userId})
+            console.log(response)
+            if(response.data.success){
+              
+              const statusBar = document.getElementById(`statusBar-${orderId}`)
+              console.log(response.data.orderStatus)
+              statusBar.classList.remove('text-primary')
+              statusBar.classList.remove('text-success')
+              statusBar.classList.add('text-danger')
+              statusBar.innerText = response.data.orderStatus
+            }
+          }
+        } catch (err) {
+          console.error(err)
+        }   
+      }
+
       const delivered = async(orderId,userId)=>{
         try {
           const result = await Swal.fire({
@@ -117,12 +189,14 @@
             const response = await axios.post('/admin/orderDelivered',{orderId,userId})
             console.log(response)
             if(response.data.success){
-              console.log('hai')
-              document.getElementById(`delBtn-${orderId}`).setAttribute('disabled','true')
+              
               const statusBar = document.getElementById(`statusBar-${orderId}`)
-              console.log(response.data.orderStatus);
-              statusBar.innerText = response.data.orderStatus
+              console.log(response.data.orderStatus)
+              statusBar.classList.remove('text-primary')
+              statusBar.classList.remove('text-danger')
               statusBar.classList.add('text-success')
+              statusBar.innerText = response.data.orderStatus
+             
             }
           }
         } catch (err) {

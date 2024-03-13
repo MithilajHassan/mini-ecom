@@ -6,7 +6,7 @@
             <div class="list-group">
                 <div class="list-group-item d-flex flex-grow-1">
                     <% for(let item of products){ %>
-                        <img src="\productImgs\<%= item.product.images[0].filename %>" class="img-fluid me-3" style="max-width: 80px;">
+                        <img src="\productImgs\<%= item.productId.images[0].filename %>" class="img-fluid me-3" style="max-width: 80px;">
                     <% } %>                                                                               
                     <p class="text-success fw-bold ms-auto"></p>                    
                 </div>
@@ -15,10 +15,14 @@
                     <h5>Delivery Address</h5>
                     <form id="order-form" method="post"> 
                     <% if(typeof address !== 'undefined'){ %>
-                    <% address.forEach((add,i)=>{ %>  
-                    <input type="radio" name="addressId" id="address-<%= i %>" value="<%= add._id %>" required >
-                    <label for="credit"><span class="fw-bold"><%= add.name %> , </span><%= add.address %></label><br>
-                    <% }) %>
+                        <% let firstChecked = true %>
+                        <% address.forEach((add, i) => { %>
+                            <% if (add.active === true) { %>
+                                <input type="radio" name="addressId" id="address-<%= i %>" value="<%= add._id %>" <%= firstChecked ? 'checked' : '' %>>
+                                <% if (firstChecked) firstChecked = false %> 
+                                <label for="address-<%= i %>"><span class="fw-bold"><%= add.name %>,</span> <%= add.address %></label><br>
+                            <% } %>
+                        <% }) %>
                     <% } %>
                     
                 </div>
@@ -33,7 +37,8 @@
                         <input type="radio" name="payment" id="cash on delivery" value="cash on delivery">
                         <label for="">Cash on delivery</label><br>
                         <input type="hidden" name="userId" id="" value="<%= user._id %>">
-                        <input type="hidden" name="totalAmount" id="" value="<%= totalAmount %>">
+                        <input type="hidden" name="totalAmount" id="t-amount-inp" value="<%= totalAmount %>">
+                        <input type="hidden" name="discount" id="inp-discount" value="0">
                         <div class="text-end "><button class="btn btn-lg mt-3 fw-bold" id="order-place" type="submit" style="background-color: #fb641b;">Place Order</button></div>
                     </form>
                 </div>
@@ -49,20 +54,65 @@
                             <td>₹<%= totalAmount %></td>
                         </tr>
                         <tr>
+                            <td>Coupon Discount</td>
+                            <td id="cpDis">₹0</td>
+                        </tr>
+                        <tr>
                             <td>Delivery Charges</td>
                             <td>₹40 (Free)</td>
                         </tr>
                         <tr class="table-secondary">
                             <td><strong>Total Amount</strong></td>
-                            <td><strong style="color: green;">₹<%= totalAmount %></strong></td>
+                            <td><strong style="color: green;" id="totalAmount">₹<%= totalAmount %></strong></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <button class="btn btn-primary w-100 mt-2" onclick="getCoupons()">Coupons</button>
         </div>
     </div>
 </div>
 
+<div class="modal " data-bs-backdrop="static" id="customModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Available Coupons</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <ul class="list-group">     
+                <% if(coupons.length > 0){ %>
+                    <li class="list-group-item d-flex justify-content-between border mb-1">
+                        <p class="fw-bold">Coupon Code</p>
+                        <p class="fw-bold">min-Purchases</p>
+                        <p class="fw-bold">Discount</p>
+                    </li>
+                    <% coupons.forEach((coup)=>{ %>
+                        <li class="list-group-item d-flex justify-content-between border mb-1 ">
+                            <p><%= coup.code %></p>
+                            <p><%= coup.minPurchases %></p>
+                            <p><%= coup.maxPurchases %></p>
+                            <p>₹<%= parseInt(coup.minPurchases * (coup.discount / 100)) %></p>
+                        </li>
+                    <% }) %>
+                    <form class="mt-2" id="coupon-form" action="">
+                        <input class="form-control" type='text' name="code" pattern="[A-Za-z0-9]+" placeholder="Enter code" title="Only letters and numbers are allowed (no spaces)" required>
+                        <input type="hidden" value="<%= totalAmount %>" name="amount" >
+                        <button id="coup-submit-btn" type="submit" hidden></button>
+                    </form>
+                <% }else{ %>
+                    <li class="list-group-item fw-bold">Coupons are not available</li>
+                <% } %>
+            </ul>
+        </div>          
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <% if(coupons.length > 0){ %><button type="button" class="btn btn-primary" onclick="applyCoupon()">Apply</button><% } %>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <footer class="text-center text-lg-start text-dark" style="background-color: #9DBC98">
         <section class="d-flex justify-content-between  p-4 text-black">
@@ -166,21 +216,31 @@
     <script src="/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const orderForm = document.getElementById('order-form')
         orderForm.addEventListener('submit',async()=>{
           try {
             event.preventDefault()
             const formData = new FormData(orderForm);
-            const formObject = {};
+            const formObject = {}
             formData.forEach((value, i) => {
                 formObject[i] = value
             })
             const response = await axios.post('/checkout', formObject )
+            console.log(response);
             if(response.data.cashOnDelivery){
-                window.location = '/orderSuccessful'
+                if(response.data.message){
+                    Swal.fire({
+                        title: "Oops..",
+                        text: response.data.message+'. Take another option',
+                        icon: "info",
+                    })
+                }else{
+                    window.location = '/orderSuccessful'
+                }
             }else if(response.data.upi){
-                const { orderId, totalAmount ,key_id } = response.data
+                const { orderId, totalAmount ,key_id ,id} = response.data
                 const options = {
                     key: key_id, 
                     amount: parseInt(totalAmount)*100, 
@@ -189,18 +249,79 @@
                     description: 'Order Payment',
                     image: "/img/Logo.avif",
                     order_id: orderId,
-                    handler: function(response) {
-                        console.log('Payment success:', response)                       
-                        window.location.href = '/orderSuccessful'
+                    handler: async function (response) {                      
+                        try {
+                            const res = await axios.post('/paymentStatus', { orderId: id, status: true })
+                            console.log('Payment success:', response)
+                            if(res){
+                                window.location.href = '/orderSuccessful'
+                            }
+                        } catch (error) {
+                            console.error('Failed to update payment status:', error)
+                        }
                     },                   
                 }
                 const raz = new Razorpay(options)
+                raz.on('payment.failed',function (response) {
+                    console.error('Payment failed:', response.error)
+                        window.location.href = '/orderSuccessful'
+                })
+                // raz.on('payment.cancel', function (response) {
+                //     console.error('Payment cancelled:', response.error)
+                //     window.location.href = '/orderSuccessful' 
+                // })
                 raz.open()
-            }               
+            }else if(response.data.Wallet == true){
+                window.location = '/orderSuccessful'
+            }else if(response.data.Wallet == false){
+                Swal.fire({
+                        title: "Wallet is not support",
+                        text: response.data.message+'. Take another option',
+                        icon: "info",
+                    })
+            }              
         } catch (error) {
             console.error('Error:', error)
         }
         })
+        const coupForm = document.getElementById('coupon-form')
+        const modal = new bootstrap.Modal(document.getElementById('customModal'))
+        const getCoupons = ()=>{         
+            modal.show()
+        }
+
+        const applyCoupon = async()=>{
+            document.getElementById('coup-submit-btn').click()         
+        }
+        coupForm.addEventListener('submit',async()=>{
+                event.preventDefault()
+                const formData = new FormData(coupForm)
+                const formObject = {}
+                formData.forEach((value, i) => {
+                    formObject[i] = value
+                })
+                const response = await axios.get(`/applyCoupon?amount=${formObject.amount}&&code=${formObject.code}`)
+                if (response.status == 200) {
+                    console.log(response)
+                    if (response.data.message) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: response.data.message,
+                        })
+                    }else{
+                        const tAmountBill = document.getElementById('totalAmount')
+                        const cpDisc = document.getElementById('cpDis')
+                        const tAmtInp = document.getElementById('t-amount-inp')
+                        tAmountBill.innerText=`₹${response.data.tAmount}`
+                        cpDisc.innerText=`₹${response.data.cpDiscount}`
+                        tAmtInp.value = response.data.tAmount
+                        const inputElement = document.getElementById('inp-discount')
+                        inputElement.value = response.data.cpDiscount
+                        modal.hide()
+                    }
+                }
+            })     
     </script>
     </body>
     </html>    

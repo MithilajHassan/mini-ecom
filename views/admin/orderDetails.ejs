@@ -5,16 +5,28 @@
     <% if (order) { %>
         <div class="card mb-4">
             <div class="card-header">
-                <h3>Order Status: <span class="<% if (orderProduct.status === 'Pending') { %>text-primary<% } else if (orderProduct.status === 'Cancelled') { %>text-danger<% } else if (orderProduct.status === 'Delivered') { %>text-success<% } %>"><%= orderProduct.status %></span></h3>
+                <h3>Order Status: <span id="statusBar" class="<% if (orderProduct.status === 'Processing') { %>text-primary<% } else if (orderProduct.status === 'Cancelled') { %>text-danger<% } else if (orderProduct.status === 'Delivered') { %>text-success<% } %>"><%= orderProduct.status %></span></h3>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Order ID:</strong> #<%= order._id %></p>
-                        <p><strong>User Name:</strong> <%= order.userId.name %></p>
+                        <p><strong>User Name:</strong> <%= order.userId._id.name %></p>
                         <p><strong>Total Amount:</strong> ₹<%= totalAmount %></p>
                         <p><strong>Payment Method:</strong> <%= order.payment %></p>
                         <p><strong>Address:</strong> <%= orderAddress.address %>, <%= orderAddress.city %>, <%= orderAddress.state %> <%= orderAddress.district %></p>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              Status
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item text-primary fw-bold" onclick="Pending('<%= orderProduct._id %>','<%= order.userId._id %>')">Processing</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item text-danger fw-bold" onclick="cancelled('<%= orderProduct._id %>','<%= order.userId._id %>')">Cancelled</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item text-success fw-bold" onclick="delivered('<%= orderProduct._id %>','<%= order.userId._id %>')">Delivered</a></li>
+                            </ul>
+                          </div>
                     </div>
                     <div class="col-md-6">
                         <h5>Product:</h5>
@@ -27,9 +39,9 @@
                                         <div class="col">
                                             <p><strong>Product ID:</strong> #<%= orderProduct.productId._id %></p>
                                             <p><strong>Product Name:</strong> <%= orderProduct.productId.name %></p>
-                                            <p><strong>Price:</strong> ₹<%= orderProduct.productId.price %></p>
+                                            <p><strong>Price:</strong> ₹<%= orderProduct.price %></p>
                                             <p><strong>Quantity:</strong> <%= orderProduct.quantity %></p>
-                                            <p><strong>Final Price:</strong> <%= orderProduct.productId.finalPrice %></p>
+                                            <p><strong>Final Price:</strong> ₹<%= orderProduct.price * orderProduct.quantity %></p>
                                         </div>
                                     </div>
                                 </li>
@@ -46,3 +58,99 @@
 </div>
 
 <%- include('../layouts/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      const Pending = async(orderId,userId)=>{
+        try {
+          const result = await Swal.fire({
+              title: "Are you sure?",
+              text: "You want to change the status?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonText: "Processing",
+              reverseButtons: true
+          })
+
+          if (result.isConfirmed) {
+            const response = await axios.post('/admin/orderPending',{orderId,userId})
+            console.log(response)
+            if(response.data.success){
+              
+              const statusBar = document.getElementById(`statusBar`)
+              console.log(response.data.orderStatus)
+              statusBar.classList.remove('text-danger')
+              statusBar.classList.remove('text-success')
+              statusBar.classList.add('text-primary')
+              statusBar.innerText = response.data.orderStatus
+              
+            }
+          }
+        } catch (err) {
+          console.error(err)
+        }   
+      }
+
+      const cancelled = async(orderId,userId)=>{
+        try {
+          const result = await Swal.fire({
+              title: "Are you sure?",
+              text: "You want to change the status?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              confirmButtonText: "Cancel it!",
+              reverseButtons: true
+          })
+
+          if (result.isConfirmed) {
+            const response = await axios.post('/admin/orderCancelling',{orderId,userId})
+            console.log(response)
+            if(response.data.success){
+              
+              const statusBar = document.getElementById(`statusBar`)
+              console.log(response.data.orderStatus)
+              statusBar.classList.remove('text-primary')
+              statusBar.classList.remove('text-success')
+              statusBar.classList.add('text-danger')
+              statusBar.innerText = response.data.orderStatus
+            }
+          }
+        } catch (err) {
+          console.error(err)
+        }   
+      }
+
+      const delivered = async(orderId,userId)=>{
+        try {
+          const result = await Swal.fire({
+              title: "Are you sure?",
+              text: "You want to change the status?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonColor: "#1ba61e",
+              cancelButtonColor: "#3085d6",
+              confirmButtonText: "Delivered",
+              reverseButtons: true
+          })
+
+          if (result.isConfirmed) {
+            const response = await axios.post('/admin/orderDelivered',{orderId,userId})
+            console.log(response)
+            if(response.data.success){
+              
+              const statusBar = document.getElementById(`statusBar`)
+              console.log(response.data.orderStatus)
+              statusBar.classList.remove('text-primary')
+              statusBar.classList.remove('text-danger')
+              statusBar.classList.add('text-success')
+              statusBar.innerText = response.data.orderStatus
+             
+            }
+          }
+        } catch (err) {
+          console.error(err)
+        }   
+      }
+    </script>

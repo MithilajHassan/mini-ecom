@@ -48,32 +48,122 @@
   <!-- Main Content -->
   <div class="container mb-3 ps-0 z-0">
     <div class="p-3 m-2">       
-        <div class="list-group bg-white mb-3">
-            <h5 class="mx-4 my-3">My Wallet</h5>          
+        <div class="list-group bg-white mb-3 border">
+            <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mx-4 my-3">My Wallet</h5>     
+            <h6 class="mx-4 fw-bold">Balance : <span id="balance-top"><%= user.balance %></span></h6> 
+            </div>   
         </div>
-        <div class="row row justify-content-center">
-            <div class="col-auto rounded bg-white p-4">
+        <div class="row row justify-content-center mb-3">
+            <div class="col-auto rounded bg-white p-4 border">
                 <h4 class="my-3">Name : <%= user.name %></p>
                 <h4 class="my-3">Phone No : <%= user.mobile_number %></p>
-                <div class="pt-2"><h4 class="mt-2 fw-bold">Balance : <%= user.balance %></p></div>
+                <div class="pt-2"><h4 class="mt-2 fw-bold">Balance : <span id="balance-main"><%= user.balance %></span></p></div>
+                <form id="paymentForm">
+                    <div class="form-group mr-2 d-flex">
+                        <input type="number" id="amountInput" class="form-control me-1" pattern="[0-9]+" placeholder="Add Money To Wallet" required>
+                        <button type="submit" class="btn btn-primary" onclick="payToWallet()">Pay</button>
+                    </div>
+                    <small class="text-center text-danger ms-3" id="errMsg"></small>
+                </form>
             </div>
+        </div>
+        
+        <div class="list-group bg-white mb-3 border">
+            <h5 class="mx-4 my-3">Transaction History</h5>      
+        </div>
+        <div id="histories">
+        <% if(typeof histories !== 'undefined' && histories.length > 0){ %>
+            <% histories.forEach((history)=>{ %>
+        <div class="list-group bg-white mb-1 px-5 pt-3 border">
+            <div class="d-flex justify-content-between">
+                <p class="fw-bold"><i class="fa-solid fa-turn-<%= history.type === 'Purchase' ? 'up text-danger' : 'down text-success' %>"></i></p>
+                <p class="fw-bold"><%= history.type %></p>
+                <p class="fw-bold"><%= history.CreatedAt.toLocaleString('default', { month: 'short', day: 'numeric',year: 'numeric' }) %></p>
+                <p class="fw-bold">₹<%= history.amount %></p>   
+            </div>        
+        </div>
+        <% }) %>
+        <% }else{ %>
+            <div class="list-group bg-white mb-3">
+                <h5 class="text-center my-3 ">There are not histories</h5>      
+            </div>
+        <% } %>
         </div>
     </div>
   </div>
 </div>
 
-<div class="position-fixed bottom-0 start-50 translate-middle p-3" style="z-index: 11">
-    <div class="toast bg-dark text-white" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-        <div class="toast-body fw-bold">
-            <h6 id="toast-body"></h6>  
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    </div>
-</div>
 <%- include('../layouts/footer') -%>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
- 
+    const payToWallet = async()=>{
+        try{
+            event.preventDefault()
+            const amountInput = document.getElementById('amountInput')
+            const amount = amountInput.value
+            if (amount.startsWith('0')) {
+                document.getElementById('errMsg').innerHTML='<small><small>Amount cannot start with 0</small></small>'
+            }else{
+                const response = await axios.get('/payToWallet', {
+                    params: {
+                        amount: amount
+                    }
+                })
+                const payment = response.data.payment
+                const options = {
+                    key: response.data.key_id, 
+                    amount: parseInt(amount)*100, 
+                    currency: 'INR',
+                    name: 'Luminova',
+                    description: 'Order Payment',
+                    image: "/img/Logo.avif",
+                    order_id: payment.id,
+                    handler: async function (response) {                      
+                        try {
+                            const response = await axios.post('/payToWallet', {amount})
+                            const topBlnc = document.getElementById('balance-top')
+                            const mainBlnc = document.getElementById('balance-main')
+                            topBlnc.innerText = parseInt(topBlnc.textContent)+parseInt(amount)
+                            mainBlnc.innerText = parseInt(mainBlnc.textContent)+parseInt(amount)
+                            amountInput.value=null
+                            let history = response.data.history
+                            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                            const date = new Date(history.CreatedAt)
+                            const formattedDate = monthNames[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear()
+                            console.log(history,formattedDate)
+                            const historyDiv = document.createElement('div')
+                            const historiesContainer = document.getElementById('histories')
+                            historyDiv.classList.add('list-group', 'bg-white', 'mb-1', 'px-5', 'pt-3', 'border');
+                            const innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="fw-bold">
+                                        <i class="fa-solid fa-turn-down text-success"></i>
+                                    </p>
+                                    <p class="fw-bold">${history.type}</p>
+                                    <p class="fw-bold">${formattedDate}</p>
+                                    <p class="fw-bold">₹${history.amount}</p>
+                                </div>
+                            `
+                            historyDiv.innerHTML = innerHTML
+                            historiesContainer.insertBefore(historyDiv,historiesContainer.firstChild)
+                            Swal.fire({
+                            title: "Success",
+                            text: 'Payment is successful',
+                            icon: "success",
+                        })                 
+                        } catch (error) {
+                            console.error('Failed to update payment status:', error)
+                        }
+                    },                   
+                }
+                const raz = new Razorpay(options)
+                raz.open()
+            }
+        }catch(err){
+            console.log(err);
+        }
+    }
 </script>

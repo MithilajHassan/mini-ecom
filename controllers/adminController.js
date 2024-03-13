@@ -3,6 +3,7 @@ import {compare} from 'bcrypt'
 import multer from "multer"
 import User from "../models/userModel.js"
 import Order from "../models/orderModel.js"
+import Product from "../models/productModel.js"
 
 //------------Multer--------//
 const storage = multer.diskStorage({
@@ -59,7 +60,81 @@ export const verifyAdmin = async(req,res)=>{
 //--------Dashboard---------//
 export const getDashboard = async(req,res)=>{
     try {
-        res.status(200).render('dashboard',{isLogged:true})
+        const productsCount = await Product.find({is_there:true}).countDocuments()
+        const orders = await Order.find({ "products.status": "Processing" })
+        let ordersCount = 0
+        orders.forEach((order)=>{
+            order.products.forEach((prod)=>{
+                if (prod.status ==='Processing') {
+                    ordersCount +=1
+                }
+            })
+        })
+
+        const delivered = await Order.find({ "products.status": "Delivered" })
+        let totalRevenue = 0
+        let discount = 0
+        delivered.forEach((order)=>{
+            discount += order.discount
+            order.products.forEach((prod)=>{
+                if (prod.status ==='Delivered') {
+                    totalRevenue += prod.price * prod.quantity
+                }
+            })
+        })
+
+        const results = await Order.aggregate([
+            { $match: { "products.status": "Delivered" } },
+        { $unwind: "$products" },
+        { 
+            $group: { 
+                _id: "$products.productId", 
+                totalQuantity: { $sum: "$products.quantity" } 
+            } 
+        },
+        { $sort: { totalQuantity: -1 } },
+        { $limit: 5 },
+        { 
+            $lookup: {
+                from: "products", 
+                localField: "_id", 
+                foreignField: "_id", 
+                as: "productDetails" 
+            }
+        },
+        { $unwind: "$productDetails" },
+        { 
+            $lookup: {
+                from: "categories", 
+                localField: "productDetails.category", 
+                foreignField: "_id", 
+                as: "categoryDetails" 
+            }
+        },
+        { $unwind: "$categoryDetails" },
+        { $project: { 
+            productName: "$productDetails.name",
+            productBrand: "$productDetails.brand",
+            category: "$categoryDetails.name",
+            totalQuantity: 1 
+        }}
+        ])        
+        const quantities = results.map(result => result.totalQuantity)
+        const products = results.map(result => result.productName)
+        const brands = results.map(result => result.productBrand)
+
+        const categoryQty = {}
+        results.forEach(result => {
+            const category = result.category
+            const totalQuantity = result.totalQuantity
+            
+            if (categoryQty.hasOwnProperty(category)) {
+                categoryQty[category] += totalQuantity
+            } else {
+                categoryQty[category] = totalQuantity
+            }
+        })
+        res.status(200).render('dashboard',{products,quantities,brands,categoryQty,productsCount,totalRevenue:totalRevenue-discount,ordersCount})
     } catch (err) {
         console.log(err)
     }
@@ -125,6 +200,8 @@ export const unBlockUser = async(req,res)=>{
 //----------- Sales Report ------------//
 export const getSalesReport = async(req,res)=>{
     try {
+        let page = req.query.page ?  parseInt(req.query.page) : 1
+        const limit = 5
         let filterBy = req.query.filter || ''
         let fromDate, toDate
 
@@ -169,22 +246,33 @@ export const getSalesReport = async(req,res)=>{
             ordersQuery['products.deliveredAt'] = { $gte: fromDate, $lte: toDate }
         }
         const orders = await Order.find(ordersQuery).populate('products.productId')
+        
         let totalSalesAmount = 0
-        const sales = orders.map(order => {
-            return order.products.map(product => {
-                totalSalesAmount += parseInt(product.productId.price * product.quantity)
-                return {
-                    productId: product.productId._id,
-                    productName: product.productId.name,
-                    price: product.productId.price,
-                    quantity: product.quantity,
-                    finalPrice: product.productId.price * product.quantity,
-                    paymentMethod: order.payment,
-                    date: product.deliveredAt.toLocaleDateString()
+        let tDiscount = 0
+        const sales = orders.flatMap(order => {
+            tDiscount += order.discount;
+            return order.products.flatMap(product => {
+                if (product.status === 'Delivered') {
+                    totalSalesAmount += parseInt(product.price * product.quantity)
+                    return [{
+                        productId: product.productId._id,
+                        productName: product.productId.name,
+                        price: product.price,
+                        quantity: product.quantity,
+                        finalPrice: product.price * product.quantity,
+                        discount: order.discount,
+                        paymentMethod: order.payment,
+                        date: product.deliveredAt
+                    }]
+                } else {
+                    return []
                 }
             })
         }).flat()
-        res.status(200).render('salesReport',{isLogged:true,sales,totalSalesAmount})
+        const startIndex = (page - 1) * limit
+        const endIndex = page * limit
+        res.status(200).render('salesReport',{isLogged:true,sales:sales.slice(startIndex,endIndex),totalSalesAmount,tDiscount,filterBy,totalPages: Math.ceil(sales.length/limit),
+        currentPage: page,})
     } catch (err) {
         console.log(err)
     }

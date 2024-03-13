@@ -233,7 +233,33 @@ export const getHome = async(req,res)=>{
         
         let sortOption = req.query.sort ? req.query.sort : 'date'
         
-        let filterOption = req.query.filter ? req.query.filter : ''
+        let brandFilter = req.query.brand || ''
+        let priceFilter = req.query.price || ''
+        let filterQuery = {}
+        if (brandFilter) {
+            switch (brandFilter) {
+                case 'TheIndianGarageCo':
+                    filterQuery.brand = 'The Indian Garage Co'
+                    break;
+                case 'THEBEARHOUSE':
+                    filterQuery.brand = 'THE BEAR HOUSE'
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (priceFilter) {
+            switch (priceFilter) {
+                case 'under500':
+                    filterQuery.price = { $lt: 500 }
+                    break;
+                case 'above500':
+                    filterQuery.price = { $gte: 500 }
+                    break;
+                default:
+                    break;
+            }
+        }
         let categoryId = req.query.category ? req.query.category : ''
         let categoryQuery = {}
         if (categoryId != '') {
@@ -253,22 +279,6 @@ export const getHome = async(req,res)=>{
             }
         }
         const sortQuery = await getSortQuery(sortOption)
-        const getFilterQuery = (filterOption) => {
-            switch (filterOption) {
-                case 'under500':
-                    return { price: { $lt: 500 } }
-                case 'above500':
-                    return { price: { $gte: 500 } }
-                case 'TheIndianGarageCo':
-                    return { brand: 'The Indian Garage Co' }
-                case 'THEBEARHOUSE':
-                    return { brand: 'THE BEAR HOUSE' }
-                default:
-                    return {}
-            }
-        }
-        const filterQuery = await getFilterQuery(filterOption)
-
         const categoryData = await Category.find({status:true})
         const productData = await Product.find({
             is_there:true,
@@ -276,8 +286,8 @@ export const getHome = async(req,res)=>{
             $or:[
                 {name:{$regex:`.*${search}.*`,$options:'i'}}
             ],
-            ...filterQuery,
-            ...categoryQuery
+            ...categoryQuery,
+            ...filterQuery
         })
         .sort(sortQuery)
         .limit(limit)
@@ -288,8 +298,8 @@ export const getHome = async(req,res)=>{
             $or:[
                 {name:{$regex:`.*${search}.*`,$options:'i'}}
             ],
-            ...filterQuery,
-            ...categoryQuery
+            ...categoryQuery,
+            ...filterQuery
         }).countDocuments()
 
         if(req.session.user_id){
@@ -306,7 +316,9 @@ export const getHome = async(req,res)=>{
                     currentPage: page,
                     search: search || '',
                     sortOption,
-                    filterOption
+                    brandFilter,
+                    priceFilter,
+                    categoryId    
                 })
             }
         }else{
@@ -318,11 +330,13 @@ export const getHome = async(req,res)=>{
                 currentPage: page,
                 search: search || '',
                 sortOption,
-                filterOption
+                brandFilter,
+                priceFilter,
+                categoryId
             })
          } 
     } catch (err) {
-        console.log(err.message)
+        console.log(err)
     }
 } 
 //-------product page-------//
@@ -406,19 +420,6 @@ export const passwordChanging = async(req,res)=>{
         console.log(err)
     }
 }
-
-// ----------- user wallet ------------//
-export const getWallet = async (req, res) => {
-
-    try {       
-        const userId = req.session.user_id
-        const userData = await User.findOne({ _id: userId })
-        res.status(200).render('wallet',{user:userData})
-    } catch (err) {
-        console.log(err)
-    }
-}
-
 
 // ----------- Logout ------------//
 export const userLogout = async(req,res)=>{

@@ -33,6 +33,10 @@ const addressSchema = new Schema({
         city:{
             type:String,
             require:true,
+        },
+        active:{
+            type:Boolean,
+            default:true
         }
     }] 
 })

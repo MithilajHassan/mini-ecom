@@ -53,9 +53,9 @@ export const editAddress = async(req,res)=>{
 export const deleteAddress = async(req,res)=>{
     try {
         const {userId,index} = req.body
-        const address = await Address.findOne({userId:userId})
-        address.addresses.splice(index,1)
-        await address.save()
+        const address = await Address.findOneAndUpdate({userId},{$set:{ [`addresses.${index}.active`]:false}})
+        // address.addresses.splice(index,1)
+        // await address.save()
         res.status(200).json({success:true})
     } catch (err) {
         console.log(err)

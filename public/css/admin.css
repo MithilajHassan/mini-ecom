@@ -108,7 +108,10 @@ body {
     max-width: 50px;
     max-height: 50px;
 }
-
+.chart-container {
+    width: 80%;
+    margin: auto;
+}
 
 
 

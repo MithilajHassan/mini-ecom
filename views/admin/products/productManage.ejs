@@ -23,66 +23,74 @@
         <div class="table-responsive">
         <table class="table table-bordered table-success">
             <tr>
-                <th colspan="7"></th>
+                <th colspan="8"></th>
             </tr>
             <tr>
                 <th>Name</th>
                 <th>Brand</th>
                 <th>Category</th>
                 <th>Price</th>
+                <th>offer Price</th>
                 <th>Quantity</th>                
                 <th>Image</th>
                 <th>Actions</th>
             </tr>
             <% if(product.length > 0){ %>
                 <% product.forEach((item)=>{ %>                   
-                       <tr>
-                        <td>
-                            <%= item.name %>
-                        </td>
-                        <td>
-                            <%= item.brand %>
-                        </td>
-                        <td>
-                            <% if(typeof category !== "undefined"){ %>
-                            <% category.forEach( value =>{ %>
-                                <% if (String(value._id) === String(item.category)) { %>
-                                    <%= value.name %>
-                                <% } %>
-                            <% }) %>
-                            <% } else { %>
-                                No categories available
+                    <tr>
+                    <td>
+                        <%= item.name %>
+                    </td>
+                    <td>
+                        <%= item.brand %>
+                    </td>
+                    <td>
+                        <% if(typeof category !== "undefined"){ %>
+                        <% category.forEach( value =>{ %>
+                            <% if (String(value._id) === String(item.category)) { %>
+                                <%= value.name %>
                             <% } %>
-                        </td>
-                        <td>
-                            ₹<%= item.price %>
-                        </td>
-                        <td>
-                            <%= item.quantity %>
-                        </td>
-                        <td>
-                            <% item.images.forEach((img)=>{ %> 
-                                <img src="<%= img.path.replace('public', '') %>" style="width: 14%;">
-                            <% }) %> 
-                            
-                        </td>
-                        <td>
-                            <div class="d-flex">
-                            <a href="/admin/editProduct?id=<%= item._id %>"><button type="submit" class="btn btn-primary me-1"><i class="fa-solid fa-pen"></i></button></a>
-                            
-                                <form action="/admin/removeProduct" id="delet-<%= item._id %>" method="post">
-                                    <input type="hidden" name="id" value="<%= item._id %>">   
-                                    <button type="button"  onclick="myConfirm('<%= item._id %>')" class="btn" style="background-color: #ff3030;"><i class="fa-solid fa-trash-can"></i></button>                                                                       
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <% }) %>                         
-                        <% }else{ %>
-                            <tr>
-                                <td colspan="7">Product not found</td>
-                            </tr>
-                            <% } %>
+                        <% }) %>
+                        <% } else { %>
+                            No categories available
+                        <% } %>
+                    </td>
+                    <td>
+                        ₹<%= item.price %>
+                    </td>
+                    <td>
+                        <%= item.offPrice || 0 %>%
+                    </td>
+                    <td>
+                        <%= item.quantity %>
+                    </td>
+                    <td>
+                        <% item.images.forEach((img)=>{ %> 
+                            <img src="<%= img.path.replace('public', '') %>" style="width: 14%;">
+                        <% }) %> 
+                        
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                        <a href="/admin/editProduct?id=<%= item._id %>"><button type="submit" class="btn btn-primary me-1"><i class="fa-solid fa-pen"></i></button></a>
+                        
+                            <form action="/admin/removeProduct" id="delet-<%= item._id %>" method="post" class="me-1">
+                                <input type="hidden" name="id" value="<%= item._id %>">   
+                                <button type="button"  onclick="myConfirm('<%= item._id %>')" class="btn" style="background-color: #ff3030;"><i class="fa-solid fa-trash-can"></i></button>                                                                       
+                            </form>
+                            <form action="/admin/addProductOffer" id="offer-<%= item._id %>" method="post">
+                                <input type="hidden" name="id" value="<%= item._id %>">   
+                                <button type="button"  onclick="getAddOffer('<%= item._id %>')" class="btn btn-success">Offer</button>                                                                       
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>                         
+                <% }else{ %>
+                <tr>
+                    <td colspan="7">Product not found</td>
+                </tr>
+            <% } %>
         </table>
     </div>
     </div>
@@ -108,9 +116,40 @@
 </div>
 </section>
 
+<div class="modal " data-bs-backdrop="static" id="customModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Offer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <form class="mt-2" id="coupon-form" action="/admin/applyProductOffer" method="post">
+                <input class="form-control" type='number' min="1" max="99" name="offer" pattern="[0-9]+" placeholder="Enter offer in percentage" required>
+                <input type="hidden" value="" name="productId" id="productId-inp" >
+                <button id="coup-submit-btn" type="submit" hidden></button>
+            </form>  
+        </div>          
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="applyOfferSub()">Apply</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 
 <%- include('../layouts/footer') -%>
 <script>
+    const modal = new bootstrap.Modal(document.getElementById('customModal'))
+    const getAddOffer= (productId)=>{
+        document.getElementById('productId-inp').value = productId
+        modal.show()
+    }
+    const applyOfferSub = ()=>{
+        document.getElementById('coup-submit-btn').click()
+    }
+
     const myConfirm = async (id)=>{
         try {
             const result = await Swal.fire({

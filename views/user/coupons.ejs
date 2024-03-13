@@ -57,8 +57,9 @@
                   <thead class="">
                     <tr>
                       <th scope="col">S.No</th> 
-                      <th scope="col">Discount</th>   
-                      <th scope="col">Maximum Purchases</th>  
+                      <th scope="col">Discount</th>  
+                      <th scope="col">Min Purchases</th> 
+                      <th scope="col">Max Purchases</th>  
                       <th scope="col">Expriy Date</th> 
                     </tr>
                   </thead>
@@ -68,6 +69,7 @@
                       <tr id="tr-<%= item.code %>">
                         <td><%= i+1 %></td>
                         <td><%= item.discount %>%</td>
+                        <td>₹<%= item.minPurchases %></td>
                         <td>₹<%= item.maxPurchases %></td>
                         <td><%= item.expiryDate.toLocaleDateString() %></td>
                       </tr>

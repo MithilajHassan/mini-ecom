@@ -44,7 +44,7 @@
             </div>
           </div>
           <div class="my-2">
-            <form id="customDateRangeForm" class="">
+            <form id="customDateRangeForm" onsubmit="return custmDateRangeForm()" class="">
               <div class="row g-2">
                 <div class="col-md-auto">
                   <label for="startDate" class="form-label">Start Date:</label>
@@ -64,10 +64,10 @@
             <div class="table-responsive mt-1">
               <table id="reportTable" class="table table-bordered table-success table-hover">
                 <thead>
-                  <tr>
+                  <tr id="top">
                     <td class="fw-bold">Total sales count : <span class="bg-white px-2 h5"><%= sales.length %></span></td>
-                    <td colspan="3" class="fw-bold">Total sales amount : <span class="bg-white px-2 h5"><%= totalSalesAmount %></span></td>
-                    <td colspan="4" class="fw-bold">Total discount : <span class="bg-white px-2 h5">100</span></td>
+                    <td colspan="3" class="fw-bold">Total sales amount : <span class="bg-white px-2 h5"><%= totalSalesAmount - tDiscount %></span></td>
+                    <td colspan="4" class="fw-bold">Total discount : <span class="bg-white px-2 h5"><%= tDiscount %></span></td>
                   </tr>
                   <tr><td colspan="8"></td></tr>
                   <tr  class="table-dark">
@@ -76,9 +76,9 @@
                     <th scope="col">Price</th>             
                     <th scope="col">Quantity</th>
                     <th scope="col">Final Price</th>
+                    <th scope="col">Discount</th>
                     <th scope="col">Payment Method</th>
                     <th scope="col">Date</th>              
-                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -90,9 +90,9 @@
                         <td>₹<%= item.price %></td>
                         <td><%= item.quantity %></td>
                         <td>₹<%= item.finalPrice %></td>
+                        <td>₹<%= item.discount %></td>
                         <td><%= item.paymentMethod %></td>
-                        <td><%= item.date %></td>
-                        <td><a href="/admin/item/<%=  %>" class="btn btn-primary">view</a></td>          
+                        <td><%= item.date ? item.date.toLocaleString('default', { month: 'numeric', day: 'numeric', year: 'numeric' }) : '' %></td>      
                     </tr>
                   <% }) %>
                   <% }else{ %>
@@ -103,70 +103,140 @@
                 </tbody>
               </table>
             </div>
-            
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-end">
+                <li class="page-item">
+                  <a class="page-link" href="<%= currentPage > 1 ? `?page=${currentPage - 1}&filter=${filterBy}` : '#' %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                    <a class="page-link" href="<%= `?page=${i}` %>"><%= i %></a>
+                  </li>
+                <% } %>
+                <li class="page-item">
+                  <a class="page-link" href="<%= currentPage < totalPages ? `?page=${currentPage + 1}&filter=${filterBy}` : '#' %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
         </div>
     </section>
 
     <%- include('../layouts/footer') -%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script>
-        const reportTable = document.getElementById("reportTable")
-        const exportBtn = document.getElementById('export-btn')
-        exportBtn.addEventListener('click',()=>{
-            let newWin= window.open("")
-            reportTable.setAttribute('border','1')
-            const clonedTable = reportTable.cloneNode(true);
-            clonedTable.querySelectorAll('tr').forEach(row => {
-                row.deleteCell(-1)
-            })
-            newWin.document.write(clonedTable.outerHTML)
-            newWin.print()
-            newWin.close()
-        })      
-
-        const excelBtn = document.getElementById('excel-btn')
-        excelBtn.addEventListener('click',async ()=>{
+        function isLocalStorageSupported() {
             try {
-                const { value: confirmed } = await Swal.fire({
-                    title: 'Generate Excel?',
-                    text: 'Are you sure you want to generate the Excel file?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Download'
-                })
-
-                if (confirmed) {
-                    const workbook = new ExcelJS.Workbook()
-                    const worksheet = workbook.addWorksheet('Report Data')
-
-                    const headers = Array.from(reportTable.querySelectorAll('th')).map(th => th.textContent.trim())
-                    worksheet.addRow(headers)
-
-                    const rows = Array.from(reportTable.querySelectorAll('tbody tr')).map(row =>
-                        Array.from(row.querySelectorAll('td')).slice(0, -1).map(td => td.textContent.trim())
-                    )
-                    rows.forEach(row => worksheet.addRow(row))
-
-                    const buffer = await workbook.xlsx.writeBuffer()
-                    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-
-                    const link = document.createElement('a')
-                    link.href = URL.createObjectURL(blob)
-                    link.download = 'report_data.xlsx'
-
-                    link.click()
-                    URL.revokeObjectURL(link.href)
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Excel file downloaded!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            } catch (error) {
-                console.error('Error generating Excel:', error)
+                return 'localStorage' in window && window['localStorage'] !== null
+            } catch (e) {
+                return false
             }
-        })
+        }
+        function getFilteredDates() {
+            if (isLocalStorageSupported()) {
+                let startDate = localStorage.getItem('startDate')
+                let endDate = localStorage.getItem('endDate')
+                if (startDate && endDate) {
+                    document.getElementById("startDate").value = startDate
+                    document.getElementById("endDate").value = endDate
+                }
+            }
+        }
+
+        window.onload = function() {
+            getFilteredDates()
+        }
+
+      const custmDateRangeForm = ()=>{
+        let startDate = document.getElementById("startDate").value
+        let endDate = document.getElementById("endDate").value
+        let currentDate = new Date()
+        let startDateObj = new Date(startDate);
+        let endDateObj = new Date(endDate)
+        if (startDate > endDate) {
+          Swal.fire({
+              title: 'Oops...',
+              text: 'End date must be greater than start date.',
+              icon: 'error',
+              confirmButtonColor: '#3085d6',
+          })
+            return false
+        }else if(startDateObj > currentDate || endDateObj > currentDate){
+          Swal.fire({
+              title: 'Oops...',
+              text: 'Selected date is in the future.',
+              icon: 'error',
+              confirmButtonColor: '#3085d6',
+          })
+            return false
+        }
+        localStorage.setItem('startDate', startDate);
+        localStorage.setItem('endDate', endDate)
+        return true
+      }
+
+      const reportTable = document.getElementById("reportTable")
+      const exportBtn = document.getElementById('export-btn')
+      exportBtn.addEventListener('click',()=>{
+          let newWin= window.open("")
+          reportTable.setAttribute('border','1')
+          // const clonedTable = reportTable.cloneNode(true);
+          // clonedTable.querySelectorAll('tr').forEach(row => {
+          //     row.deleteCell(-1)
+          // })
+          newWin.document.write(reportTable.outerHTML)
+          newWin.print()
+          newWin.close()
+      })      
+
+      const excelBtn = document.getElementById('excel-btn')
+      excelBtn.addEventListener('click',async ()=>{
+        try {
+            const { value: confirmed } = await Swal.fire({
+                title: 'Generate Excel?',
+                text: 'Are you sure you want to generate the Excel file?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Download'
+            })
+
+            if (confirmed) {
+              const workbook = new ExcelJS.Workbook()
+              const worksheet = workbook.addWorksheet('Report Data')
+
+              const headers = Array.from(reportTable.querySelectorAll('th')).map(th => th.textContent.trim())
+              worksheet.addRow(headers);
+              const rows = Array.from(reportTable.querySelectorAll('tbody tr')).map(row =>
+                  Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim())
+              )
+              rows.forEach(row => worksheet.addRow(row))
+
+              const overHead = Array.from(reportTable.querySelectorAll('thead td')).map(td => td.textContent.trim())
+              worksheet.addRow(overHead)
+
+              const buffer = await workbook.xlsx.writeBuffer()
+              const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+
+              const link = document.createElement('a')
+              link.href = URL.createObjectURL(blob)
+              link.download = 'report_data.xlsx'
+              link.click()
+              URL.revokeObjectURL(link.href)
+
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Excel file downloaded!',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+            }
+        } catch (error) {
+            console.error('Error generating Excel:', error)
+        }
+      })
     </script>

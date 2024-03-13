@@ -1,20 +1,165 @@
 <%- include('../layouts/adminHeader') -%>
 
-<aside class="side-bar mt-4 " id="aside-menu">
-    <button class="side-menu border-0 m-1" id="menu-btn" onclick="asideShow()"><span class="material-symbols-outlined">menu</span></button>   
-    <div class="menu-items m-1 pt-2" id="menu-page">      
-        <a href="/admin/dashboard" class="text-black text-decoration-none"><button id="admn-btns" class="admn-btn-A mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i> Dashboard</button></a>
-        <a href="/admin/users" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-people-fill ms-3"></i> Customers</button></a>
-        <a href="/admin/productManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-archive-fill ms-3"></i> Products</button></a>
-        <a href="/admin/allOrders" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-file-earmark-fill ms-3"></i> Orders</button></a>
-        <a href="/admin/categoryManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
-        <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-card-image ms-3"></i> Banners</button></a>
-        <a href="/admin/couponManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-star-fill ms-3"></i> coupons</button></a>
-        <a href="/admin/salesReport" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i class="bi bi-clipboard-data-fill ms-3"></i> Sales Report</button></a>
+<section class="container-fluid p-0 d-flex ">
+    <aside class="side-bar mt-4 me-2" id="aside-menu">
+        <button class="side-menu bitem-0 m-1" id="menu-btn" onclick="asideShow()"><span
+                class="material-symbols-outlined">menu</span></button>
+        <div class="menu-values m-1 pt-2" id="menu-page">
+            <a href="/admin/dashboard" class="text-black text-decoration-none"><button
+                    class="admn-btn-A mb-2 w-100 text-start "><i class="bi bi-box2-fill ms-3"></i>
+                    Dashboard</button></a>
+            <a href="/admin/users" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                        class="bi bi-people-fill ms-3"></i> Customers</button></a>
+            <a href="/admin/productManage" class="text-black text-decoration-none"><button
+                    class="admn-btn mb-2 w-100 text-start "><i class="bi bi-archive-fill ms-3"></i>
+                    Products</button></a>
+            <a href="/admin/allOrders" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                        class="bi bi-file-earmark-fill ms-3"></i> Orders</button></a>
+            <a href="/admin/categoryManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                        class="bi bi-diagram-2-fill ms-3"></i> Category</button></a>
+            <a href="" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                        class="bi bi-card-image ms-3"></i> Banners</button></a>
+            <a href="/admin/couponManage" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                        class="bi bi-star-fill ms-3"></i> coupons</button></a>
+            <a href="/admin/salesReport" class="text-black text-decoration-none"><button class="admn-btn mb-2 w-100 text-start "><i
+                        class="bi bi-clipboard-data-fill ms-3"></i> Sales Report</button></a>
+        </div>
+        <div class="adm-lgout m-1" id="l-out-btn">
+            <a class="text-black text-decoration-none" href="/admin/adminLogout"><button
+                    class="admn-btn w-100 text-start "><i class="bi bi-box-arrow-right ms-3"></i>
+                    Logout</button></a>
+        </div>
+    </aside>
+    <div class="px-3 w-75">
+        <div class="chart-container d-flex mt-4 align-items-center">
+            <div class="">
+                <div class="card p-3 text-center shadow">
+                    <i class="fa-solid fa-hand-holding-dollar text-center text-success"></i>
+                    <h5 class="fw-bold">Revenue</h5>
+                    <h6 class="fw-bold text-success">₹<%= totalRevenue %></h6>
+                </div>
+            </div>
+            <div class="ms-3">
+                <div class="card p-3 text-center shadow">
+                    <i class="fa-solid fa-truck text-primary"></i>
+                    <h5 class="fw-bold mx-2">Orders</h5>
+                    <h6 class="fw-bold"><%= ordersCount %></h6>
+                </div>
+            </div>
+            <div class="ms-3">
+                <div class="card p-3 text-center shadow">
+                    <i class="fa-solid fa-cart-shopping text-warning"></i>
+                    <h5 class="fw-bold">Products</h5>
+                    <h6 class="fw-bold"><%= productsCount %></h6>
+                </div>
+            </div>
+            <div class="bg-white p-3" style="width: 35%; margin:auto" >
+                <h5>Categories</h5>
+                <canvas id="categoryChart" data-category="<%= JSON.stringify(categoryQty) %>" class=""></canvas>
+            </div>
+        </div>
+        <div class="chart-container bg-white p-3 mt-5">
+            <h5>Products</h5>
+            <canvas id="productChart" data-products="<%= JSON.stringify(products) %>" data-productQty="<%= JSON.stringify(quantities) %>" class=""></canvas>
+        </div>
+        <div class="chart-container bg-white p-3 mt-4  mb-3">
+            <h5>Produt Brands</h5>
+            <canvas id="brandChart" data-brands="<%= JSON.stringify(brands) %>" class=""></canvas>
+        </div>
     </div>
-    <div class="adm-lgout m-1" id="l-out-btn">
-        <a class="text-black text-decoration-none" href="/admin/adminLogout"><button class="admn-btn w-100 text-start "><i class="bi bi-box-arrow-right ms-3"></i> Logout</button></a>
-    </div>
-</aside>
+</section>
+    
 
 <%- include('../layouts/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctxP = document.getElementById('productChart')
+    const products = JSON.parse(ctxP.getAttribute('data-products'))
+    const productQty = JSON.parse(ctxP.getAttribute('data-productQty'))
+    new Chart(ctxP, {
+    type: 'bar',
+    data: {
+        labels: products,
+        datasets: [{
+        label: 'Products',
+        data: productQty,
+        borderWidth: 2
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    color: 'black',
+                    // font: {
+                    //     weight: 'bold'
+                    // }
+                }
+            },
+            y: {
+                ticks: {
+                    color: 'black' ,
+                    beginAtZero: true,
+                    precision: 0,
+                    callback: function(value) {
+                        if (value % 1 === 0) {
+                            return value;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    })
+    const ctxB = document.getElementById('brandChart')
+    const brands = JSON.parse(ctxB.getAttribute('data-brands'))
+    new Chart(ctxB, {
+    type: 'bar',
+    data: {
+        labels: brands,
+        datasets: [{
+        label: 'Brands',
+        data: productQty,
+        borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                ticks: {
+                    color: 'black'
+                }
+            },
+            y: {
+                ticks: {
+                    color: 'black' ,
+                    beginAtZero: true,
+                    precision: 0,
+                    callback: function(value) {
+                        if (value % 1 === 0) {
+                            return value;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    })
+
+    const ctxC = document.getElementById('categoryChart')
+    const category = JSON.parse(ctxC.getAttribute('data-category'))
+    new Chart(ctxC, {
+    type: 'pie',
+    data: {
+        labels: Object.keys(category),
+        datasets: [{
+        label: 'Category',
+        data: Object.values(category),
+        borderWidth: 1
+        }]
+    },
+    options: {
+
+    }
+    })
+  </script>

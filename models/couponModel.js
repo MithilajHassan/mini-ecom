@@ -13,6 +13,10 @@ const couponSchema = new Schema({
         type: Number,
         require: true
     },
+    minPurchases: {
+        type: Number,
+        require: true
+    },
     limit: {
         type: Number,
         require: true
@@ -27,6 +31,6 @@ const couponSchema = new Schema({
         require: true
     }
 })
-couponSchema.index({ expiryDat: 1 }, { expireAfterSeconds: 0 })
+couponSchema.index({ expiryDate: 1 }, { expireAfterSeconds: 0 })
 const Coupon = model('Coupon', couponSchema)
 export default Coupon

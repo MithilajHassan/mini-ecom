@@ -7,8 +7,9 @@ const cartSchema = new Schema({
     },
     product:[{
         productId:{
-            type:String,
-            tequire:true
+            type:Schema.ObjectId,
+            tequire:true,
+            ref:'Product'
         },
         quantity:{
             type:Number,
