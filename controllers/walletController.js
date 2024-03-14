@@ -7,11 +7,14 @@ const instance = new Razorpay({
     key_secret: process.env.key_secret
 })
 export const getWallet = async (req, res) => {
-    try {       
+    try {   
+        let page = req.query.page ?  parseInt(req.query.page) : 1
+        const limit = 5    
         const userId = req.session.user_id
         const userData = await User.findOne({ _id: userId })
-        const histories = await WalletHistory.find({userId}).sort({CreatedAt:-1})
-        res.status(200).render('wallet',{user:userData,histories})
+        const histories = await WalletHistory.find({userId}).sort({CreatedAt:-1}).limit(limit).skip((page-1)*limit)
+        const walletCount = await WalletHistory.find({userId}).countDocuments()
+        res.status(200).render('wallet',{user:userData,histories,totalPages: Math.ceil(walletCount/limit),currentPage: page,})
     } catch (err) {
         console.log(err)
     }

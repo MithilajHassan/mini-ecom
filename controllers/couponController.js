@@ -3,10 +3,15 @@ import Coupon from "../models/couponModel.js"
 
 export const getCoupons = async (req, res) => {  
     try {       
+        let page = req.query.page ?  parseInt(req.query.page) : 1
+        const limit = 8
         const userId = req.session.user_id
         const userData = await User.findOne({ _id: userId })
-        const coupons = await Coupon.find({isActive:true})
-        res.status(200).render('coupons',{user:userData,coupons})
+        const coupons = await Coupon.find({isActive:true}).sort({ createdAt: -1 })     
+        .limit(limit)
+        .skip((page-1)*limit)
+        const couponsCount = await Coupon.find({isActive:true}).countDocuments()
+        res.status(200).render('coupons',{user:userData,coupons,totalPages: Math.ceil(couponsCount/limit),currentPage: page})
     } catch (err) {
         console.log(err)
     }
@@ -18,8 +23,8 @@ export const getCheckCoupon = async (req, res) => {
         if (!coupon) {
             res.status(200).json({message:'Invalid Coupon'})
         }
-        if (coupon.maxPurchases >= amount && coupon.minPurchases <= amount) {
-            let cpDiscount = coupon.maxPurchases * (coupon.discount/100)
+        if (coupon.minPurchases <= amount) {
+            let cpDiscount = coupon.minPurchases * (coupon.discount/100)
             let tAmount = amount - cpDiscount 
             res.status(200).json({coupon,cpDiscount,tAmount})
         }else{
@@ -34,8 +39,14 @@ export const getCheckCoupon = async (req, res) => {
 //-----------------Admin side -----------//
 export const loadCouponMng = async(req,res)=>{
     try {
-        const coupons = await Coupon.find()
-        res.status(200).render('couponManagement',{isLogged:true,coupons}) 
+        let page = req.query.page ?  parseInt(req.query.page) : 1
+        const limit = 7
+        const coupons = await Coupon.find().sort({ createdAt: -1 })     
+        .limit(limit)
+        .skip((page-1)*limit)
+        const couponsCount = await Coupon.find().countDocuments()
+
+        res.status(200).render('couponManagement',{isLogged:true,coupons,totalPages: Math.ceil(couponsCount/limit),currentPage: page}) 
     } catch (err) {
         console.log(err)
     }

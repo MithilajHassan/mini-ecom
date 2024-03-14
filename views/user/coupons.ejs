@@ -58,8 +58,7 @@
                     <tr>
                       <th scope="col">S.No</th> 
                       <th scope="col">Discount</th>  
-                      <th scope="col">Min Purchases</th> 
-                      <th scope="col">Max Purchases</th>  
+                      <th scope="col">Min Purchases</th>  
                       <th scope="col">Expriy Date</th> 
                     </tr>
                   </thead>
@@ -70,7 +69,6 @@
                         <td><%= i+1 %></td>
                         <td><%= item.discount %>%</td>
                         <td>₹<%= item.minPurchases %></td>
-                        <td>₹<%= item.maxPurchases %></td>
                         <td><%= item.expiryDate.toLocaleDateString() %></td>
                       </tr>
                     <% }) %>
@@ -83,6 +81,25 @@
                 </table>
               </div>            
           </div>
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end">
+              <li class="page-item">
+                <a class="page-link" href="<%= currentPage > 1 ? `?page=${currentPage - 1}` : '#' %>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                  <a class="page-link" href="<%= `?page=${i}` %>"><%= i %></a>
+                </li>
+              <% } %>
+              <li class="page-item">
+                <a class="page-link" href="<%= currentPage < totalPages ? `?page=${currentPage + 1}` : '#' %>" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
       </div>
   </div>
 </div>

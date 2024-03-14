@@ -159,6 +159,8 @@ export const paymentRetry = async (req, res) => {
 
 export const myOrders = async(req,res)=>{
     try {
+        let page = req.query.page ?  parseInt(req.query.page) : 1
+        const limit = 6
         const userId = req.session.user_id
         const userData = await User.findOne({ _id: userId })
         const orders = await Order.find({ userId }).sort({ createdAt: -1 })
@@ -179,7 +181,11 @@ export const myOrders = async(req,res)=>{
                 })
             }
         }
-        res.status(200).render('myOrders', { user: userData, orders: products ,key_id:process.env.Key_ID})              
+        const totalPages = Math.ceil(products.length / limit)
+        const startIndex = (page - 1) * limit
+        const endIndex = startIndex + limit
+        products = products.slice(startIndex, endIndex)
+        res.status(200).render('myOrders', { user: userData, orders: products ,key_id:process.env.Key_ID,totalPages,currentPage: page})              
     } catch (err) {
         console.log(err)
     }
@@ -276,7 +282,7 @@ export const getInvoice = async(req,res)=>{
     try {     
         const id = req.query.id     
         const order = await Order.findOne({ _id:id}).populate('products.productId').populate('userId')
-        const addressess = await Address.findOne({userId:order.userId.id})
+        const addressess = await Address.findOne({userId:order.userId._id})
         const address = addressess.addresses.find((add)=> add._id.equals(order.addressId))
         res.status(200).render('invoice',{order,address})              
     } catch (err) {

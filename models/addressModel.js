@@ -6,6 +6,10 @@ const addressSchema = new Schema({
         require:true
     },
     addresses:[{
+        _id: {
+            type: Schema.ObjectId,
+            immutable: true 
+        },
         name:{
             type:String,
             require:true

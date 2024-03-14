@@ -9,10 +9,6 @@ const couponSchema = new Schema({
         type: Number,
         require: true
     },
-    maxPurchases: {
-        type: Number,
-        require: true
-    },
     minPurchases: {
         type: Number,
         require: true
