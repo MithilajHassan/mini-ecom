@@ -5,13 +5,13 @@
     <div class="row">
         <div class="col-md-5 border-end">         
             <div class="d-flex justify-content-center mb-1" id="zoom-div">
-                <img src="<%= product.images[0].path.replace('public', '') %>" class="zoom-img border border-success img-fluid w-75"> 
+                <img src="<%= product.images[0].path.replace('public', '') %>" id="main-img" class="zoom-img border border-success img-fluid w-75"> 
             </div>
             <div class="d-flex justify-content-center">
-            <% product.images.forEach( (value) =>{ %>
-                <a href=""><div class="border border-dark px-2 ms-2">
+            <% product.images.forEach( (value,i) =>{ %>
+                <div class="border border-dark px-2 ms-2" id="subImg-<%= i %>" data-imgSrc="<%= value.path.replace('public', '') %>" onclick="changeImg('<%= i %>')">
                     <img src="<%= value.path.replace('public', '') %>" class="object-fit-contain" style="width: 3rem;">
-                </div></a>
+                </div>
             <% }) %>
             </div>
         </div> 
@@ -60,33 +60,47 @@
 
 <%- include('../layouts/footer') -%>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
+<script> 
+    let zoomDiv = document.getElementById('zoom-div')
     const options = {
-    width: 400,
-    zoomWidth: 300,
-    offset: {vertical: 0, horizontal: 10}
- }
-    new ImageZoom(document.getElementById('zoom-div'),options)
+        width: 400,
+        zoomWidth: 300,
+        offset: {vertical: 0, horizontal: 10}
+    }
+    new ImageZoom(zoomDiv,options)
 
-    const addWishBtn = document.getElementById('add-wish');
-const removeWishBtn = document.getElementById('remove-wish');
+    const changeImg = (imgIndex)=>{
+        const mainImg = document.getElementById('main-img')
+        const subImg = document.getElementById(`subImg-${imgIndex}`)
+        const src = subImg.getAttribute('data-imgSrc')
+        mainImg.src= src
+        zoomDiv = document.getElementById('zoom-div')
+        new ImageZoom(zoomDiv,options)
+    }
+    
+   
+    const addWishBtn = document.getElementById('add-wish')
+    const removeWishBtn = document.getElementById('remove-wish')
 
 if (addWishBtn && removeWishBtn) {
     addWishBtn.addEventListener('click', async () => {
         try {
             const productId = addWishBtn.getAttribute('data-productId');
             const response = await axios.post('/addToWishlist', { productId });
-            document.getElementById('toast-body').innerText = response.data.message;
+            document.getElementById('toast-body').innerText = response.data.message
             const toastEl = document.querySelector('.toast');
             const toast = new bootstrap.Toast(toastEl, {
                 autohide: true,
                 delay: 2000
-            });
-            toast.show();
-            addWishBtn.setAttribute('hidden', 'true');
-            removeWishBtn.removeAttribute('hidden');
+            })
+            toast.show()
+            if (response.data.success) {
+                addWishBtn.setAttribute('hidden', 'true')
+                removeWishBtn.removeAttribute('hidden')
+            }
+            
         } catch (error) {
-            console.error(error);
+            console.error(error)
         }
     });
 
@@ -100,8 +114,8 @@ if (addWishBtn && removeWishBtn) {
             delay: 2000
         });
         toast.show();
-        removeWishBtn.setAttribute('hidden', 'true');
-        addWishBtn.removeAttribute('hidden');
+        removeWishBtn.setAttribute('hidden', 'true')
+        addWishBtn.removeAttribute('hidden')
     });
 }
 

@@ -28,7 +28,7 @@ export const addToWishlist = async(req,res)=>{
             }else{
                 const productId = req.body.productId
                 await Wishlist.updateOne({userId},{$push:{products:{productId}}},{upsert:true})
-                res.status(200).json({message:'Added to your Wishlist'})  
+                res.status(200).json({message:'Added to your Wishlist',success:true})  
             }            
         }else{
             res.status(200).json({message:'Please login first.'})
