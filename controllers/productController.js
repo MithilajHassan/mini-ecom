@@ -43,7 +43,7 @@ export const getProductMng = async(req,res)=>{
 export const getAddProduct = async(req,res)=>{
     try {
         const category = await Category.find({status:true})
-        res.status(200).render('products/addProduct',{isLogged:true,category})
+        res.status(200).render('products/addProduct.ejs',{isLogged:true,category})
     } catch (err) {
         console.log(err)
     }

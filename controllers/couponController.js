@@ -54,7 +54,7 @@ export const loadCouponMng = async(req,res)=>{
 export const addCoupon = async(req,res)=>{
     try {
         
-        const {code, discount, minPurchases, maxPurchases, limit, expiryDays} = req.body
+        const {code, discount, minPurchases, limit, expiryDays} = req.body
         const existing = await Coupon.findOne({code})
         if (existing) {
             res.status(200).json({success:false,message:'Coupon code is already exist'})
@@ -66,7 +66,6 @@ export const addCoupon = async(req,res)=>{
             code,
             discount,
             minPurchases,
-            maxPurchases,
             limit,
             expiryDate:expirationDate
         })
@@ -91,7 +90,7 @@ export const getEditCoupon = async(req,res)=>{
 }
 export const editCoupon = async(req,res)=>{
     try {
-        const {code, discount, minPurchases, maxPurchases, limit, expiryDays, id} = req.body
+        const {code, discount, minPurchases, limit, expiryDays, id} = req.body
         const existing = await Coupon.findOne({code})
         if (existing && existing._id != id) {
             res.status(200).json({success:false,message:'Coupon code is already exist'})
@@ -99,7 +98,7 @@ export const editCoupon = async(req,res)=>{
         }
         const expirationDate = new Date()
         expirationDate.setDate(expirationDate.getDate() + parseInt(expiryDays))
-        const update = await Coupon.updateOne({_id:id},{$set:{code,discount,minPurchases,maxPurchases,limit,expiryDate:expirationDate}})
+        const update = await Coupon.updateOne({_id:id},{$set:{code,discount,minPurchases,limit,expiryDate:expirationDate}})
         console.log(update);
         res.status(200).json({success:true})
     } catch (err) {
