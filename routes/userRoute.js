@@ -75,7 +75,7 @@ user_route.get('/forgot',getForgotpass)
 user_route.post('/forgot',forgotpass)
 user_route.get('/forgotOTP',isOtpSent,getOtpForForgot)
 user_route.post('/forgotOTP',isOtpSent,checkOtpForForgot)
-user_route.post('/changePassword',isOtpSent,changePass)
+user_route.post('/resetPassword',isOtpSent,changePass)
 user_route.get('/resendForForgot',isOtpSent,resendForgot)
 
 //------User Signup-------//
