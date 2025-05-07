@@ -7,6 +7,6 @@ const dbConnect = async()=>{
     } catch (error) {
         console.log('connection error:'+error)
     }
-} 
+}
 
 export default dbConnect
